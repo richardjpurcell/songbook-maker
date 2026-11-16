@@ -23,3 +23,6 @@ data/table_of_contents/*
 # Generated songbooks
 output/*
 !output/.gitkeep
+
+# Regenerable matching suggestions
+data/metadata/match_report.csv
