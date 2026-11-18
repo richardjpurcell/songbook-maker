@@ -25,6 +25,11 @@ INK = (0.12, 0.16, 0.22)
 MUTED = (0.40, 0.45, 0.50)
 LINK = (0.10, 0.31, 0.56)
 
+# Index/compilation PDFs are not individual song sheets.
+NON_SONG_PDFS = {'Key for keys.pdf', 'Music - ALL.pdf'}
+SUPPLEMENT_KEY = 'Unreviewed PDFs'
+
+
 
 def printable(value):
     """Make text safe for built-in PDF fonts without affecting source charts."""
@@ -133,9 +138,42 @@ def load_entries():
                     warnings.append(f'{ident}: unreadable PDF {filename!r} ({exc}); blank page created')
         selected.append(item)
 
+    # Show every individual source PDF exactly once, even when its catalogue
+    # record is held for review or excluded as a redundant imported entry.
+    # These copies are visibly identified as UNREVIEWED: no musical key is inferred.
+    included_files = {item['file'] for item in selected if item['status'] == 'include'}
+    supplemental = []
+    for path in sorted(SHEETS.iterdir(), key=lambda p: p.name.casefold()):
+        if not path.is_file() or path.suffix.lower() != '.pdf':
+            continue
+        if path.name in NON_SONG_PDFS or path.name in included_files:
+            continue
+        try:
+            with pymupdf.open(path) as source:
+                count = source.page_count
+                if not count:
+                    raise ValueError('zero pages')
+        except Exception as exc:
+            warnings.append(f'Unreviewed PDF not printable: {path.name} ({exc})')
+            continue
+        title = path.stem.replace('_', ' ').strip() or path.stem
+        supplemental.append({
+            'title': title, 'key': SUPPLEMENT_KEY, 'file': path.name,
+            'song_uid': '', 'source_id': '', 'status': 'include',
+            'row_index': len(rows) + len(supplemental) + 2,
+            'position': str(len(supplemental) + 1),
+            'capo_fret': '', 'chord_shapes_key': '',
+            'page_count': count, 'is_supplemental': True,
+        })
+    if supplemental:
+        selected.extend(supplemental)
+        keys.append(SUPPLEMENT_KEY)
+
     # Display IDs are generated from the selected songs, never from legacy IDs.
     # Preserve existing key order, but always send Unknown to the end.
-    keys = [key for key in keys if key != 'Unknown'] + (['Unknown'] if 'Unknown' in keys else [])
+    keys = ([key for key in keys if key not in ('Unknown', SUPPLEMENT_KEY)]
+            + (['Unknown'] if 'Unknown' in keys else [])
+            + ([SUPPLEMENT_KEY] if SUPPLEMENT_KEY in keys else []))
     groups = {key: [] for key in keys}
     for item in selected:
         groups[item['key']].append(item)
@@ -149,7 +187,7 @@ def load_entries():
                 return (10**9, item['row_index'])
         group.sort(key=order)
         for number, item in enumerate(group, 1):
-            prefix = 'U' if key == 'Unknown' else key
+            prefix = 'R' if key == SUPPLEMENT_KEY else ('U' if key == 'Unknown' else key)
             item['display_id'] = f'{prefix}{number:03d}'
     for filename, count in used.items():
         if count > 1:
@@ -190,7 +228,7 @@ def build():
             page.insert_text((LEFT, 94), 'Click a song to jump to its chart', fontsize=9, color=MUTED)
         for kind, object_, y in rows:
             if kind == 'key':
-                page.insert_text((LEFT, y), printable(f'KEY: {object_}'), fontname='hebo', fontsize=12, color=INK)
+                page.insert_text((LEFT, y), printable(object_ if object_ == SUPPLEMENT_KEY else f'KEY: {object_}'), fontname='hebo', fontsize=12, color=INK)
             else:
                 item = object_
                 label = f"{item['display_id']}   {item['title']}"
@@ -201,7 +239,7 @@ def build():
     outline = [[1, 'Table of Contents', 1]]
     for key in keys:
         group = groups[key]
-        outline.append([1, 'Unknown Key' if key == 'Unknown' else f'Key of {key}', len(doc) + 1])
+        outline.append([1, 'Unreviewed PDFs' if key == SUPPLEMENT_KEY else ('Unknown Key' if key == 'Unknown' else f'Key of {key}'), len(doc) + 1])
         for item in group:
             item['page'] = len(doc)
             count = item.get('page_count', 1) if item['status'] == 'include' else 1
@@ -216,7 +254,9 @@ def build():
             try:
                 for source_page in range(count):
                     page = doc.new_page(width=PAGE.width, height=PAGE.height)
-                    header_left = f"{item['display_id']}    KEY: {key}"
+                    header_left = (f"{item['display_id']}    UNREVIEWED ARRANGEMENT"
+                                   if item.get('is_supplemental') else
+                                   f"{item['display_id']}    KEY: {key}")
                     if item['capo_fret'] and item['chord_shapes_key']:
                         header_left += (f"    |    {item['chord_shapes_key']} shapes, "
                                         f"Capo {item['capo_fret']}")
@@ -247,7 +287,10 @@ def build():
         doc.close()
         if tmp.exists():
             tmp.unlink()
-    included = sum(s['status'] == 'include' for g in groups.values() for s in g)
+    all_items = [s for g in groups.values() for s in g]
+    supplemental_count = sum(bool(s.get('is_supplemental')) for s in all_items)
+    included = sum(s['status'] == 'include' for s in all_items)
+    curated_count = included - supplemental_count
     blanks = sum(s['status'] == 'placeholder' for g in groups.values() for s in g)
     unlisted = sorted(p.name for p in SHEETS.glob('*.pdf') if p.name not in {
         s['file'] for g in groups.values() for s in g if s['status'] == 'include'})
@@ -256,15 +299,18 @@ def build():
         f'Catalogue entries: {total}',
         f'Included charts: {included}',
         f'Placeholder songs: {blanks}',
-        f'Review/excluded entries: {total-included-blanks}',
+        f'Review/excluded catalogue entries: {total-curated_count-blanks}',
+        f'Curated charts: {curated_count}',
+        f'Unreviewed PDFs included: {supplemental_count}',
         f'TOC pages: {len(toc_pages)}',
         f'PDF pages: {sum(1 for _ in pymupdf.open(OUTPUT))}',
-        f'Unassigned source PDFs (informational): {len(unlisted)}',
+        f'Unrepresented individual PDFs: {len([f for f in unlisted if f not in NON_SONG_PDFS])}',
+        f'Excluded compilation/index PDFs: {len([f for f in NON_SONG_PDFS if (SHEETS / f).is_file()])}',
         '', 'WARNINGS', '--------', *(warnings or ['None']),
         '', 'UNASSIGNED SOURCE PDFs', '----------------------', *(unlisted or ['None']),
     ]
     REPORT.write_text('\n'.join(lines) + '\n', encoding='utf-8')
-    print('\n'.join(lines[:9]))
+    print('\n'.join(lines[:13]))
     print(f'Songbook: {OUTPUT}')
     print(f'Report: {REPORT}')
 
