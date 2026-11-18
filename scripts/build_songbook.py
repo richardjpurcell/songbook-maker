@@ -27,6 +27,9 @@ LINK = (0.10, 0.31, 0.56)
 
 # Index/compilation PDFs are not individual song sheets.
 NON_SONG_PDFS = {'Key for keys.pdf', 'Music - ALL.pdf'}
+# Explicitly retired duplicate: original source remains on disk. Its catalogue
+# row must be status=exclude and retain the exact permanent UID and filename.
+EXCLUDED_DUPLICATES = {'S00289': 'Stand My Ground.pdf'}
 SUPPLEMENT_KEY = 'Unreviewed PDFs'
 
 # Per-source presentation corrections in the assembled book only. Never edit
@@ -224,6 +227,19 @@ def load_entries():
     if any(not re.fullmatch(r'S\d{5,}', uid) for uid in uids) or len(uids) != len(set(uids)):
         raise ValueError('song_uid must be present and unique for every catalogue record')
 
+    # Fail closed if the retired duplicate is renamed, re-included, or absent.
+    excluded_duplicate_files = set()
+    for uid, expected_pdf in EXCLUDED_DUPLICATES.items():
+        matches = [r for r in rows if r['song_uid'].strip() == uid]
+        if not matches:
+            continue  # Small synthetic fixtures need not contain this catalogue record.
+        if len(matches) != 1 or matches[0].get('status', '').strip().lower() != 'exclude' or \
+                matches[0].get('source_pdf', '').strip() != expected_pdf:
+            raise ValueError(f'Excluded duplicate {uid} must be status=exclude with source {expected_pdf!r}')
+        if not (SHEETS / expected_pdf).is_file():
+            raise ValueError(f'Excluded duplicate source missing: {expected_pdf}')
+        excluded_duplicate_files.add(expected_pdf)
+
     keys = []
     selected = []
     warnings = []
@@ -290,7 +306,7 @@ def load_entries():
     for path in sorted(SHEETS.iterdir(), key=lambda p: p.name.casefold()):
         if not path.is_file() or path.suffix.lower() != '.pdf':
             continue
-        if path.name in NON_SONG_PDFS or path.name in included_files:
+        if path.name in NON_SONG_PDFS or path.name in excluded_duplicate_files or path.name in included_files:
             continue
         try:
             with pymupdf.open(path) as source:
@@ -541,6 +557,8 @@ def build():
     blanks = sum(s['status'] == 'placeholder' for g in groups.values() for s in g)
     unlisted = sorted(p.name for p in SHEETS.glob('*.pdf') if p.name not in {
         s['file'] for g in groups.values() for s in g if s['status'] == 'include'})
+    unrepresented = [f for f in unlisted if f not in NON_SONG_PDFS and
+                     f not in EXCLUDED_DUPLICATES.values()]
     lines = [
         'SONGBOOK BUILD REPORT', '=====================',
         f'Catalogue entries: {total}',
@@ -553,7 +571,8 @@ def build():
         f'Alphabetical index pages: {len(alphabetical_pages)}',
         f'Alphabetical index links: {alpha_links}',
         f'PDF pages: {sum(1 for _ in pymupdf.open(OUTPUT))}',
-        f'Unrepresented individual PDFs: {len([f for f in unlisted if f not in NON_SONG_PDFS])}',
+        f'Unrepresented individual PDFs: {len(unrepresented)}',
+        f'Excluded duplicate PDFs: {len([f for f in unlisted if f in EXCLUDED_DUPLICATES.values()])}',
         f'Excluded compilation/index PDFs: {len([f for f in NON_SONG_PDFS if (SHEETS / f).is_file()])}',
         f'Skipped blank source pages: {sum(s.startswith("SKIPPED") for s in page_audit)}',
         f'Sparse source pages kept for review: {sum(s.startswith("REVIEW sparse") for s in page_audit)}',
@@ -561,7 +580,10 @@ def build():
         f'Source pages rotated: {sum(s.startswith("ROTATED") for s in page_audit)}',
         '', 'PAGE LAYOUT AUDIT', '-----------------', *(page_audit or ['None']),
         '', 'WARNINGS', '--------', *(warnings or ['None']),
-        '', 'UNASSIGNED SOURCE PDFs', '----------------------', *(unlisted or ['None']),
+        '', 'INTENTIONALLY EXCLUDED DUPLICATE PDFs', '-------------------------------------',
+        *(sorted(f for f in unlisted if f in EXCLUDED_DUPLICATES.values()) or ['None']),
+        '', 'UNASSIGNED SOURCE PDFs', '----------------------',
+        *(sorted(f for f in unlisted if f not in EXCLUDED_DUPLICATES.values()) or ['None']),
     ]
     REPORT.write_text('\n'.join(lines) + '\n', encoding='utf-8')
     print('\n'.join(lines[:13]))

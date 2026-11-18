@@ -287,7 +287,7 @@ S00285,U098,Unknown,98,Song for Gale-jamie,Song for Gale-jamie,,exclude,Song for
 S00286,U099,Unknown,99,Souvenirs (Prine),Souvenirs (Prine),,exclude,Souvenirs (Prine).pdf,unknown,,
 S00287,U100,Unknown,100,Spanish Pipedream2,Spanish Pipedream2,,exclude,Spanish Pipedream2.pdf,unknown,,
 S00288,U101,Unknown,101,Spiritual Healing (Toots),Spiritual Healing (Toots),,exclude,Spiritual Healing (Toots).pdf,unknown,,
-S00289,U102,G,102,Stand My Ground,Stand My Ground,,include,Stand My Ground.pdf,unknown,,
+S00289,U102,G,102,Stand My Ground,Stand My Ground,,exclude,Stand My Ground.pdf,unknown,,
 S00290,U103,C,103,Stay (Kevin Fox),Stay (Kevin Fox),,include,Stay (Kevin Fox).pdf,unknown,,
 S00291,U104,Unknown,104,Streets of London (McTell),Streets of London (McTell),,exclude,Streets of London (McTell).pdf,unknown,,
 S00292,D027,D,27,Studying for Sustainability,Studying for Sustainability,,include,Studying for Sustainability (D).pdf,imported_unverified,,
