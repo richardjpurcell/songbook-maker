@@ -29,6 +29,15 @@ LINK = (0.10, 0.31, 0.56)
 NON_SONG_PDFS = {'Key for keys.pdf', 'Music - ALL.pdf'}
 SUPPLEMENT_KEY = 'Unreviewed PDFs'
 
+# Per-source presentation corrections in the assembled book only. Never edit
+# the source PDF; use an exact filename and zero-based source-page number.
+SOURCE_PAGE_ROTATIONS = {('Red-Winged Blackbird.pdf', 0): 180}
+
+
+def source_page_rotation(filename, page_index):
+    return SOURCE_PAGE_ROTATIONS.get((filename, page_index), 0)
+
+
 # Conservative source-page inspection. Blank means effectively no visible ink,
 # not merely a short continuation. All-originally-blank documents retain one page.
 BLANK_INK_FRACTION = 0.0
@@ -442,13 +451,22 @@ def build():
                     page.insert_text((LEFT, 81), trim(item['title'], RIGHT-LEFT, 9), fontsize=9, color=MUTED)
                     if source is not None:
                         ink_fraction = source_page_ink_fraction(source[source_page])
-                        choice = choose_source_clip(source[source_page], ink_fraction)
+                        rotation = source_page_rotation(item['file'], source_page)
+                        # Rotation is a presentation correction, not a crop.
+                        # Keep the whole scanned sheet to avoid losing marginal notes.
+                        choice = (None if rotation else
+                                  choose_source_clip(source[source_page], ink_fraction))
+                        if rotation:
+                            page_audit.append(
+                                f'ROTATED source page: {item["file"]} | '
+                                f'source page {source_page + 1} | {rotation} degrees')
                         if choice is None:
-                            page.show_pdf_page(BODY, source, source_page, keep_proportion=True)
+                            page.show_pdf_page(BODY, source, source_page,
+                                               keep_proportion=True, rotate=rotation)
                         else:
                             clip, gain = choice
                             page.show_pdf_page(BODY, source, source_page,
-                                               keep_proportion=True, clip=clip)
+                                               keep_proportion=True, clip=clip, rotate=rotation)
                             page_audit.append(
                                 f'ENLARGED source page: {item["file"]} | '
                                 f'source page {source_page + 1} | {gain:.2f}x | '
@@ -540,6 +558,7 @@ def build():
         f'Skipped blank source pages: {sum(s.startswith("SKIPPED") for s in page_audit)}',
         f'Sparse source pages kept for review: {sum(s.startswith("REVIEW sparse") for s in page_audit)}',
         f'Source pages enlarged: {sum(s.startswith("ENLARGED") for s in page_audit)}',
+        f'Source pages rotated: {sum(s.startswith("ROTATED") for s in page_audit)}',
         '', 'PAGE LAYOUT AUDIT', '-----------------', *(page_audit or ['None']),
         '', 'WARNINGS', '--------', *(warnings or ['None']),
         '', 'UNASSIGNED SOURCE PDFs', '----------------------', *(unlisted or ['None']),

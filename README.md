@@ -13,6 +13,17 @@ conda activate songbook-maker
 
 Requires Python 3 and PyMuPDF (`python -m pip install pymupdf` if needed). The working environment already contains these dependencies.
 
+## Known source-page orientation correction
+
+The generated songbook rotates **page 1 of `Red-Winged Blackbird.pdf` by 180°** to make the chart readable. This is an exact-filename, exact-page builder override; it does **not** change the original source PDF, the musical key, any other pages, or the songbook header/footer. The build report lists the rotation under `PAGE LAYOUT AUDIT` and counts it as `Source pages rotated: 1` when that chart is included.
+
+To test the correction without using private PDFs:
+
+```bash
+python scripts/test_source_rotation.py
+python scripts/test_alphabetical_index.py
+```
+
 ## Build the songbook
 
 ```bash
