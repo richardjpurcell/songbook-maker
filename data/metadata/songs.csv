@@ -1,175 +1,314 @@
-id,key,position,toc_entry,source_pdf
-G001,G,1,Are You Making Any Money (Mollie Weaver),
-G002,G,2,Autumn Leaves. (Eric Clapton; Yves Montand),
-G003,G,3,Big Rock Candy Mountain  (Norman Blake),
-G004,G,4,Clay Pigeons (John Prine),
-G005,G,5,Clocks and Spoons (John Prine),
-G006,G,6,Cloud Song [our own Jamie Simpson!],
-G007,G,7,Compadres in the Old Sierra Madre (The Waybacks),
-G008,G,8,Daddy’s Gone to Knoxville (Mark Knopfler),
-G009,G,9,Daydream (Lovin’ Spoonful),
-G010,G,10,Dixie Chicken  (Little Feat),
-G011,G,11,Everything Stays (Olivia Olson),
-G012,G,12,Fly Me to the Moon (Sinatra; Tommy Emmanuel),
-G013,G,13,Folsom Prison Blues (Johnny Cash),
-G014,G,14,A Fool Such as I (Hank Snow),
-G015,G,15,Four Strong Winds. (Ian & Sylvia; Neil Young),
-G016,G,16,Freight Train (Elizabeth Cotton),
-G017,G,17,Freight Train (Fred Eaglesmith),
-G018,G,18,Friend of the Devil (Grateful Dead),
-G019,G,19,Glory of True Love (John Prine),
-G020,G,20,Gum Tree Canoe (John Hartford),
-G021,G,21,High on a Mountain (Ola Belle Reed),
-G022,G,22,How Deep Is the Ocean (Eric Clapton),
-G023,G,23,I Wan’na Be Like You (Disney: Jungle Book),
-G024,G,24,I Won’t Back Down (Tom Petty),
-G025,G,25,In Hell I’ll Be In Good Company  (Dead South),
-G026,G,26,Jockey Full of Bourbon (Tom Waits),
-G027,G,27,Louis Collins (Mississippi John Hurt),
-G028,G,28,Monkey and the Engineer (Jesse Fuller; Grateful Dead),
-G029,G,29,Nine Pound Hammer (John Prine),
-G030,G,30,Nobody Knows You When You’re Down and Out (Eric Clapton),
-G031,G,31,Ohio (CSNY) / Can’t Make It Here Anymore (James McMurtry),
-G032,G,32,Old Home Place (The Dillards),
-G033,G,33,Old Number 7 (Devil Makes Three),
-G034,G,34,Old Zeb (Larry Kaplan),
-G035,G,35,Oo De Lally (Disney: Robin Hood [Roger Williams]),
-G036,G,36,Pistol Packin’ Mama (John Prine),
-G037,G,37,A Porter’s Love Song to a Chambermaid (Fats Waller),
-G038,G,38,Psycho Killer (Talking Heads),
-G039,G,39,Ripple (Grateful Dead),
-G040,G,40,Salty Dog Blues (Johnny Cash; Doc Watson),
-G041,G,41,Santa Never Brings Me A Banjo,
-G042,G,42,Shine On Harvest Moon (Leon Redbone),
-G043,G,43,Song For A Winter’s Night (Gordon Lightfoot; The Good Lovelies),
-G044,G,44,Spanish Pipedream (John Prine),
-G045,G,45,Spiritual Healing (Toots & the Maytals),
-G046,G,46,(Under the) Stormy Sky (Daniel Lanois),
-G047,G,47,Tennessee Waltz (Trad.; Holly Cole),
-G048,G,48,This Summer I Went Swimming (McGarrigles),
-G049,G,49,Under the Boardwalk (The Coasters),
-G050,G,50,Wagon Wheel (Old Crow Medicine Show; Darius Rucker),
-G051,G,51,Waitin’ Around to Die (Townes van Zandt),
-G052,G,52,The Way It Goes (Gillian Welch),
-G053,G,53,Wayfaring Stranger (Trad.; Emmylou Harris),
-G054,G,54,The Weight (The Band),
-G055,G,55,Where the Wild Wild Flowers Grow (Ola Belle Reed),
-G056,G,56,Yodelady (Old Man Luedecke),
-G057,G,57,You Ain’t Goin’ Nowhere (Bob Dylan),
-G058,G,58,You Got A Friend In Me (Randy Newman),
-G059,G,59,You’re the Cream In My Coffee  (Ruth Etting),
-G060,G,60,Your Flag Decal Won’t Get You into Heaven Anymore (John Prine),
-D001,D,1,Caledonia (Dougie MacLean),
-D002,D,2,Caroline (Old Crow Medicine Show),
-D003,D,3,Country Roads (John Denver; Toots & the Maytals),
-D004,D,4,Dead Flowers (Rolling Stones),
-D005,D,5,"Fish and Bird  (Tom Waits; “Live from Here with Chris Thile”: Aoife O’Donovan, Noam Pikelny et al.)",
-D006,D,6,Green Rocky Road  (Trad.; McGarrigles),
-D007,D,7,Harlem River Blues  (Justin Townes Earle),
-D008,D,8,Hello My Baby (Warner Bros. cartoon: “One Froggy Evening”),
-D009,D,9,Log Driver’s Waltz  (McGarrigles),
-D010,D,10,No Place to Fall  (Townes van Zandt),
-D011,D,11,Old Man (Neil Young),
-D012,D,12,The Other Side of Town (John Prine),
-D013,D,13,Prairie Lullaby (Leon Redbone),
-D014,D,14,Rebel Jesus (Jackson Browne),
-D015,D,15,Royals  (Lorde; The Beef Seeds),
-D016,D,16,Sea of Heartbreak (Rosanne Cash),
-D017,D,17,Shankill Butchers (Decemberists),
-D018,D,18,Souvenirs (John Prine),
-D019,D,19,Streets of London (Ralph McTell),
-D020,D,20,Tomorrow Is a Long Time (Dylan),
-D021,D,21,Wash Away  (Joe Purdy),
-C001,C,1,All Shades of Blue. (Gregory Alan Isakov),
-C002,C,2,Beast of Burden (Rolling Stones),
-C003,C,3,Boats to Build  (Guy Clark),
-C004,C,4,Boxcar (Shovels & Rope),
-C005,C,5,Church Street Blues (Norman Blake),
-C006,C,6,Come On Up to the House (Tom Waits),
-C007,C,7,Delta Mama Blues (Townes van Zandt),
-C008,C,8,Don’t Think Twice (Bob Dylan),
-C009,C,9,Don’t Worry About the Government (Talking Heads),
-C010,C,10,Don’t You Take It Too Bad (Townes van Zandt),
-C011,C,11,“Fireman Sam” Theme Song,
-C012,C,12,Fish and Whistle (John Prine),
-C013,C,13,The Fox (Trad.),
-C014,C,14,Gentle On My Mind (John Hartford; Glen Campbell),
-C015,C,15,The Gift  (Ian Tyson),
-C016,C,16,"Give Me More, More, More (Of Your Kisses) (Lefty Frizzell)",
-C017,C,17,Goin’ Down this Road Feelin’ Bad (Eric Bibb),
-C018,C,18,Goodnight Loving Trail (Utah Phillips),
-C019,C,19,Heart of Saturday Night  (Tom Waits),
-C020,C,20,Hickory Wind  (Gram Parsons; Gillian Welch),
-C021,C,21,Hobo’s Lullaby (Emmylou Harris; Pete Seeger),
-C022,C,22,I Don’t Wanna Leave You On The Farm (Ween),
-C023,C,23,If I Needed You  (Townes van Zandt),
-C024,C,24,Jolie Louise (Daniel Lanois),
-C025,C,25,Lonesome Friends of Science (John Prine),
-C026,C,26,My Creole Belle  (Mississippi John Hurt),
-C027,C,27,Now You’re Gone  (Tracy Nelson),
-C028,C,28,Old Time River Man (John Hartford),
-C029,C,29,Ol’ 55  (Tom Waits),
-C030,C,30,Paradise (John Prine),
-C031,C,31,Secondary Waltz  (Mark Knopfler),
-C032,C,32,"Sick, Sober and Sorry (Lefty Frizzell)",
-C033,C,33,Sin City  (Gram Parsons),
-C034,C,34,Sloop John B  (Beach Boys),
-C035,C,35,Song for Gale  (Larry Kaplan),
-C036,C,36,Sudbury Saturday Night  (Stompin Tom Connors),
-C037,C,37,Summer’s End (John Prine),
-C038,C,38,Tall Buildings (John Hartford),
-C039,C,39,That’s The Way That The World Goes Round (John Prine),
-C040,C,40,They Killed John Henry (Justin Townes Earle),
-C041,C,41,Trouble In Mind  (Hank Snow),
-C042,C,42,Waimanolo Blues  (Country Comfort),
-C043,C,43,Waltz About Whiskey (Watchhouse),
-C044,C,44,Will You Love Me Tomorrow; (The Shirelles; Dave Mason),
-A001,A,1,Are You Lonesome Tonight (Leon Redbone),
-A002,A,2,Bargain Store (Dolly Parton; Dan Bettridge),
-A003,A,3,Bear Necessities  (Disney: “Jungle Book”),
-A004,A,4,Big Joe Mufferaw (Stompin’ Tom Connors),
-A005,A,5,Blue Umbrella (John Prine),
-A006,A,6,Boots of Spanish Leather (Bob Dylan),
-A007,A,7,Champs Élysées (Joe Dassin),
-A008,A,8,Chocolate Jesus  (Tom Waits),
-A009,A,9,Christmas Island (Leon Redbone),
-A010,A,10,Dark Hollow  (Grateful Dead),
-A011,A,11,Diamonds & Gold  (Tom Waits),
-A012,A,12,Down Among the Sheltering Palms (Johnny Mercer; Chordettes),
-A013,A,13,Etta’s Tune  (Rosanne Cash),
-A014,A,14,For What It’s Worth (Buffalo Springfield),
-A015,A,15,Girl of the North Country (Bob Dylan),
-A016,A,16,Goodnight Moon (Shivaree),
-A017,A,17,I Just Want to Dance with You (John Prine),
-A018,A,18,I Quit My Job (Old Man Luedecke),
-A019,A,19,L.A. Freeway  (Guy Clark),
-A020,A,20,Last Cheater’s Waltz (Sonny Throckmorton; Emmylou Harris),
-A021,A,21,Laughing River (Greg Brown),
-A022,A,22,Life During Wartime  (Talking Heads),
-A023,A,23,Lifelong Lullaby  (Will Derryberry),
-A024,A,24,A Little Bird  (Blue Lu Barker; Maria Muldaur),
-A025,A,25,The Long Way Home  (Tom Waits),
-A026,A,26,Marshmallow World,
-A027,A,27,Mexican Home (John Prine [Live version]),
-A028,A,28,Navajo Rug  (Ian Tyson),
-A029,A,29,No Lonesome Tune  (Townes van Zandt),
-A030,A,30,Old Town Road (Lil Nas X + Billy Joe Cyrus),
-A031,A,31,Own Heart’s Delight  (Ian Tyson),
-A032,A,32,Pancho and Lefty (Townes van Zandt; Willie Nelson),
-A033,A,33,Pizzirico (Mavericks),
-A034,A,34,Put Me On The Trail To Carolina  (Delmore Bros.; Louvin Bros.),
-A035,A,35,Ragpicker’s Dream  (Mark Knopfler),
-A036,A,36,Return of the Grievous Angel  (Gram Parsons),
-A037,A,37,The Roswell Incident  (Suzanne McDermott),
-A038,A,38,Sailing to Philadelphia  (Mark Knopfler [Live version from Privateering]),
-A039,A,39,Sam Stone (John Prine),
-A040,A,40,Something Stupid  (Frank + Nancy Sinatra; Lola Marsh; Mavericks),
-A041,A,41,Stand By Me  (Ben E. King; Tracy Chapman [Live]),
-A042,A,42,Sweet Sunny South (Trad.),
-A043,A,43,Tell It To Me  (Tom Waits),
-A044,A,44,Tennessee Whiskey,
-A045,A,45,Third Rate Romance (Amazing Rhythm Aces; Rosanne Cash),
-A046,A,46,This Must Be the Place (Naïve Melody) (Talking Heads; Scott Bradlee’s Postmodern Jukebox),
-A047,A,47,2:19  (Tom Waits),
-A048,A,48,The Vanagon Song,
-A049,A,49,Wasting My Love On You (Annette Hanshaw),
+id,key,position,toc_entry,title,artist,status,source_pdf
+G001,G,1,Are You Making Any Money (Mollie Weaver),Are You Making Any Money (Mollie Weaver),,include,Are You Making Any Money (in G).pdf
+G002,G,2,Autumn Leaves. (Eric Clapton; Yves Montand),Autumn Leaves. (Eric Clapton; Yves Montand),,include,Autumn Leaves (Uytae arr).pdf
+G003,G,3,Big Rock Candy Mountain  (Norman Blake),Big Rock Candy Mountain  (Norman Blake),,include,BIG ROCK-3.pdf
+G004,G,4,Clay Pigeons (John Prine),Clay Pigeons (John Prine),,include,Clay Pigeons.pdf
+G005,G,5,Clocks and Spoons (John Prine),Clocks and Spoons (John Prine),,include,Clocks and Spoons (Prine).pdf
+G006,G,6,Cloud Song [our own Jamie Simpson!],Cloud Song [our own Jamie Simpson!],,include,Cloud Song (Jamie).pdf
+G007,G,7,Compadres in the Old Sierra Madre (The Waybacks),Compadres in the Old Sierra Madre (The Waybacks),,include,Compadres.pdf
+G008,G,8,Daddy’s Gone to Knoxville (Mark Knopfler),Daddy’s Gone to Knoxville (Mark Knopfler),,include,Daddy’s Gone to Knoxville 3.pdf
+G009,G,9,Daydream (Lovin’ Spoonful),Daydream (Lovin’ Spoonful),,include,Daydream (Lovin_ Spoonful).pdf
+G010,G,10,Dixie Chicken  (Little Feat),Dixie Chicken  (Little Feat),,include,Dixie Chicken in B.pdf
+G011,G,11,Everything Stays (Olivia Olson),Everything Stays (Olivia Olson),,include,Everything Stays (G).pdf
+G012,G,12,Fly Me to the Moon (Sinatra; Tommy Emmanuel),Fly Me to the Moon (Sinatra; Tommy Emmanuel),,include,Fly Me to the Moon.pdf
+G013,G,13,Folsom Prison Blues (Johnny Cash),Folsom Prison Blues (Johnny Cash),,include,Folsom Prison Blues (G).pdf
+G014,G,14,A Fool Such as I (Hank Snow),A Fool Such as I (Hank Snow),,include,"Fool Such as I (Bill Trader, 1952) - IN G --.pdf"
+G015,G,15,Four Strong Winds. (Ian & Sylvia; Neil Young),Four Strong Winds. (Ian & Sylvia; Neil Young),,include,Four Strong Winds.pdf
+G016,G,16,Freight Train (Elizabeth Cotton),Freight Train (Elizabeth Cotton),,include,Freight Train - Cotten.pdf
+G017,G,17,Freight Train (Fred Eaglesmith),Freight Train (Fred Eaglesmith),,include,Freight Train - Eaglesmith.pdf
+G018,G,18,Friend of the Devil (Grateful Dead),Friend of the Devil (Grateful Dead),,review,
+G019,G,19,Glory of True Love (John Prine),Glory of True Love (John Prine),,review,
+G020,G,20,Gum Tree Canoe (John Hartford),Gum Tree Canoe (John Hartford),,review,
+G021,G,21,High on a Mountain (Ola Belle Reed),High on a Mountain (Ola Belle Reed),,review,High on a Mountain (G).pdf
+G022,G,22,How Deep Is the Ocean (Eric Clapton),How Deep Is the Ocean (Eric Clapton),,review,
+G023,G,23,I Wan’na Be Like You (Disney: Jungle Book),I Wan’na Be Like You (Disney: Jungle Book),,review,
+G024,G,24,I Won’t Back Down (Tom Petty),I Won’t Back Down (Tom Petty),,review,I Won_t Back Down.pdf
+G025,G,25,In Hell I’ll Be In Good Company  (Dead South),In Hell I’ll Be In Good Company  (Dead South),,review,
+G026,G,26,Jockey Full of Bourbon (Tom Waits),Jockey Full of Bourbon (Tom Waits),,review,Jockey Full of Bourbon.pdf
+G027,G,27,Louis Collins (Mississippi John Hurt),Louis Collins (Mississippi John Hurt),,review,
+G028,G,28,Monkey and the Engineer (Jesse Fuller; Grateful Dead),Monkey and the Engineer (Jesse Fuller; Grateful Dead),,review,Monkey and the Engineer.pdf
+G029,G,29,Nine Pound Hammer (John Prine),Nine Pound Hammer (John Prine),,review,Nine Pound Hammer 2.pdf
+G030,G,30,Nobody Knows You When You’re Down and Out (Eric Clapton),Nobody Knows You When You’re Down and Out (Eric Clapton),,review,Nobody Knows You When You_re Down and Out.pdf
+G031,G,31,Ohio (CSNY) / Can’t Make It Here Anymore (James McMurtry),Ohio (CSNY) / Can’t Make It Here Anymore (James McMurtry),,review,
+G032,G,32,Old Home Place (The Dillards),Old Home Place (The Dillards),,review,Old Home Place 2.pdf
+G033,G,33,Old Number 7 (Devil Makes Three),Old Number 7 (Devil Makes Three),,review,
+G034,G,34,Old Zeb (Larry Kaplan),Old Zeb (Larry Kaplan),,review,
+G035,G,35,Oo De Lally (Disney: Robin Hood [Roger Williams]),Oo De Lally (Disney: Robin Hood [Roger Williams]),,review,Oo De Lally.pdf
+G036,G,36,Pistol Packin’ Mama (John Prine),Pistol Packin’ Mama (John Prine),,review,Pistol Packin Mama.pdf
+G037,G,37,A Porter’s Love Song to a Chambermaid (Fats Waller),A Porter’s Love Song to a Chambermaid (Fats Waller),,review,
+G038,G,38,Psycho Killer (Talking Heads),Psycho Killer (Talking Heads),,review,Psycho Killer.pdf
+G039,G,39,Ripple (Grateful Dead),Ripple (Grateful Dead),,review,Ripple.pdf
+G040,G,40,Salty Dog Blues (Johnny Cash; Doc Watson),Salty Dog Blues (Johnny Cash; Doc Watson),,review,Salty Dog Blues-2.pdf
+G041,G,41,Santa Never Brings Me A Banjo,Santa Never Brings Me A Banjo,,review,Santa Never Brings Me a Banjo-2.pdf
+G042,G,42,Shine On Harvest Moon (Leon Redbone),Shine On Harvest Moon (Leon Redbone),,review,Shine On Harvest Moon.pdf
+G043,G,43,Song For A Winter’s Night (Gordon Lightfoot; The Good Lovelies),Song For A Winter’s Night (Gordon Lightfoot; The Good Lovelies),,review,
+G044,G,44,Spanish Pipedream (John Prine),Spanish Pipedream (John Prine),,review,
+G045,G,45,Spiritual Healing (Toots & the Maytals),Spiritual Healing (Toots & the Maytals),,review,
+G046,G,46,(Under the) Stormy Sky (Daniel Lanois),(Under the) Stormy Sky (Daniel Lanois),,review,
+G047,G,47,Tennessee Waltz (Trad.; Holly Cole),Tennessee Waltz (Trad.; Holly Cole),,review,
+G048,G,48,This Summer I Went Swimming (McGarrigles),This Summer I Went Swimming (McGarrigles),,review,
+G049,G,49,Under the Boardwalk (The Coasters),Under the Boardwalk (The Coasters),,review,Under the Boardwalk.pdf
+G050,G,50,Wagon Wheel (Old Crow Medicine Show; Darius Rucker),Wagon Wheel (Old Crow Medicine Show; Darius Rucker),,review,Wagon Wheel 4.pdf
+G051,G,51,Waitin’ Around to Die (Townes van Zandt),Waitin’ Around to Die (Townes van Zandt),,review,Waitin’ Around to Die-2.pdf
+G052,G,52,The Way It Goes (Gillian Welch),The Way It Goes (Gillian Welch),,review,
+G053,G,53,Wayfaring Stranger (Trad.; Emmylou Harris),Wayfaring Stranger (Trad.; Emmylou Harris),,review,
+G054,G,54,The Weight (The Band),The Weight (The Band),,review,The Weight-3.pdf
+G055,G,55,Where the Wild Wild Flowers Grow (Ola Belle Reed),Where the Wild Wild Flowers Grow (Ola Belle Reed),,review,Where the Wild Wild Flowers Grow.pdf
+G056,G,56,Yodelady (Old Man Luedecke),Yodelady (Old Man Luedecke),,review,YODELADY.pdf
+G057,G,57,You Ain’t Goin’ Nowhere (Bob Dylan),You Ain’t Goin’ Nowhere (Bob Dylan),,review,
+G058,G,58,You Got A Friend In Me (Randy Newman),You Got A Friend In Me (Randy Newman),,review,
+G059,G,59,You’re the Cream In My Coffee  (Ruth Etting),You’re the Cream In My Coffee  (Ruth Etting),,review,
+G060,G,60,Your Flag Decal Won’t Get You into Heaven Anymore (John Prine),Your Flag Decal Won’t Get You into Heaven Anymore (John Prine),,review,Your Flag Decal Won_t Get You into Heaven Anymore.pdf
+D001,D,1,Caledonia (Dougie MacLean),Caledonia (Dougie MacLean),,review,Caledonia.pdf
+D002,D,2,Caroline (Old Crow Medicine Show),Caroline (Old Crow Medicine Show),,review,Caroline.pdf
+D003,D,3,Country Roads (John Denver; Toots & the Maytals),Country Roads (John Denver; Toots & the Maytals),,review,Country Roads 4.pdf
+D004,D,4,Dead Flowers (Rolling Stones),Dead Flowers (Rolling Stones),,review,Dead Flowers 2.pdf
+D005,D,5,"Fish and Bird  (Tom Waits; “Live from Here with Chris Thile”: Aoife O’Donovan, Noam Pikelny et al.)","Fish and Bird  (Tom Waits; “Live from Here with Chris Thile”: Aoife O’Donovan, Noam Pikelny et al.)",,review,Fish and Bird.pdf
+D006,D,6,Green Rocky Road  (Trad.; McGarrigles),Green Rocky Road  (Trad.; McGarrigles),,review,
+D007,D,7,Harlem River Blues  (Justin Townes Earle),Harlem River Blues  (Justin Townes Earle),,review,
+D008,D,8,Hello My Baby (Warner Bros. cartoon: “One Froggy Evening”),Hello My Baby (Warner Bros. cartoon: “One Froggy Evening”),,review,
+D009,D,9,Log Driver’s Waltz  (McGarrigles),Log Driver’s Waltz  (McGarrigles),,review,
+D010,D,10,No Place to Fall  (Townes van Zandt),No Place to Fall  (Townes van Zandt),,review,
+D011,D,11,Old Man (Neil Young),Old Man (Neil Young),,review,Old Man (D).pdf
+D012,D,12,The Other Side of Town (John Prine),The Other Side of Town (John Prine),,review,
+D013,D,13,Prairie Lullaby (Leon Redbone),Prairie Lullaby (Leon Redbone),,review,Prairie Lullaby in D.pdf
+D014,D,14,Rebel Jesus (Jackson Browne),Rebel Jesus (Jackson Browne),,review,
+D015,D,15,Royals  (Lorde; The Beef Seeds),Royals  (Lorde; The Beef Seeds),,review,Royals (D).pdf
+D016,D,16,Sea of Heartbreak (Rosanne Cash),Sea of Heartbreak (Rosanne Cash),,review,
+D017,D,17,Shankill Butchers (Decemberists),Shankill Butchers (Decemberists),,review,
+D018,D,18,Souvenirs (John Prine),Souvenirs (John Prine),,review,
+D019,D,19,Streets of London (Ralph McTell),Streets of London (Ralph McTell),,review,
+D020,D,20,Tomorrow Is a Long Time (Dylan),Tomorrow Is a Long Time (Dylan),,review,
+D021,D,21,Wash Away  (Joe Purdy),Wash Away  (Joe Purdy),,review,Wash Away.pdf
+C001,C,1,All Shades of Blue. (Gregory Alan Isakov),All Shades of Blue. (Gregory Alan Isakov),,review,All Shades of Blue-2.pdf
+C002,C,2,Beast of Burden (Rolling Stones),Beast of Burden (Rolling Stones),,review,
+C003,C,3,Boats to Build  (Guy Clark),Boats to Build  (Guy Clark),,review,
+C004,C,4,Boxcar (Shovels & Rope),Boxcar (Shovels & Rope),,review,BOXCAR-2.pdf
+C005,C,5,Church Street Blues (Norman Blake),Church Street Blues (Norman Blake),,review,Church Street Blues.pdf
+C006,C,6,Come On Up to the House (Tom Waits),Come On Up to the House (Tom Waits),,review,COME ON UP TO THE HOUSE 3.pdf
+C007,C,7,Delta Mama Blues (Townes van Zandt),Delta Mama Blues (Townes van Zandt),,review,
+C008,C,8,Don’t Think Twice (Bob Dylan),Don’t Think Twice (Bob Dylan),,review,
+C009,C,9,Don’t Worry About the Government (Talking Heads),Don’t Worry About the Government (Talking Heads),,review,
+C010,C,10,Don’t You Take It Too Bad (Townes van Zandt),Don’t You Take It Too Bad (Townes van Zandt),,review,
+C011,C,11,“Fireman Sam” Theme Song,“Fireman Sam” Theme Song,,review,
+C012,C,12,Fish and Whistle (John Prine),Fish and Whistle (John Prine),,review,
+C013,C,13,The Fox (Trad.),The Fox (Trad.),,review,The Fox.pdf
+C014,C,14,Gentle On My Mind (John Hartford; Glen Campbell),Gentle On My Mind (John Hartford; Glen Campbell),,review,
+C015,C,15,The Gift  (Ian Tyson),The Gift  (Ian Tyson),,review,The Gift-2.pdf
+C016,C,16,"Give Me More, More, More (Of Your Kisses) (Lefty Frizzell)","Give Me More, More, More (Of Your Kisses) (Lefty Frizzell)",,review,
+C017,C,17,Goin’ Down this Road Feelin’ Bad (Eric Bibb),Goin’ Down this Road Feelin’ Bad (Eric Bibb),,review,
+C018,C,18,Goodnight Loving Trail (Utah Phillips),Goodnight Loving Trail (Utah Phillips),,review,
+C019,C,19,Heart of Saturday Night  (Tom Waits),Heart of Saturday Night  (Tom Waits),,review,
+C020,C,20,Hickory Wind  (Gram Parsons; Gillian Welch),Hickory Wind  (Gram Parsons; Gillian Welch),,review,
+C021,C,21,Hobo’s Lullaby (Emmylou Harris; Pete Seeger),Hobo’s Lullaby (Emmylou Harris; Pete Seeger),,review,Hobo_s Lullaby.pdf
+C022,C,22,I Don’t Wanna Leave You On The Farm (Ween),I Don’t Wanna Leave You On The Farm (Ween),,review,
+C023,C,23,If I Needed You  (Townes van Zandt),If I Needed You  (Townes van Zandt),,review,If I Needed You.pdf
+C024,C,24,Jolie Louise (Daniel Lanois),Jolie Louise (Daniel Lanois),,review,Jolie Louise.pdf
+C025,C,25,Lonesome Friends of Science (John Prine),Lonesome Friends of Science (John Prine),,review,Lonesome Friends of Science 2.pdf
+C026,C,26,My Creole Belle  (Mississippi John Hurt),My Creole Belle  (Mississippi John Hurt),,review,My Creole Belle.pdf
+C027,C,27,Now You’re Gone  (Tracy Nelson),Now You’re Gone  (Tracy Nelson),,review,
+C028,C,28,Old Time River Man (John Hartford),Old Time River Man (John Hartford),,review,
+C029,C,29,Ol’ 55  (Tom Waits),Ol’ 55  (Tom Waits),,review,
+C030,C,30,Paradise (John Prine),Paradise (John Prine),,review,Paradise.pdf
+C031,C,31,Secondary Waltz  (Mark Knopfler),Secondary Waltz  (Mark Knopfler),,review,
+C032,C,32,"Sick, Sober and Sorry (Lefty Frizzell)","Sick, Sober and Sorry (Lefty Frizzell)",,review,
+C033,C,33,Sin City  (Gram Parsons),Sin City  (Gram Parsons),,review,
+C034,C,34,Sloop John B  (Beach Boys),Sloop John B  (Beach Boys),,review,Sloop John B-2.pdf
+C035,C,35,Song for Gale  (Larry Kaplan),Song for Gale  (Larry Kaplan),,review,
+C036,C,36,Sudbury Saturday Night  (Stompin Tom Connors),Sudbury Saturday Night  (Stompin Tom Connors),,review,
+C037,C,37,Summer’s End (John Prine),Summer’s End (John Prine),,review,
+C038,C,38,Tall Buildings (John Hartford),Tall Buildings (John Hartford),,review,
+C039,C,39,That’s The Way That The World Goes Round (John Prine),That’s The Way That The World Goes Round (John Prine),,review,
+C040,C,40,They Killed John Henry (Justin Townes Earle),They Killed John Henry (Justin Townes Earle),,review,They Killed John Henry.pdf
+C041,C,41,Trouble In Mind  (Hank Snow),Trouble In Mind  (Hank Snow),,review,Trouble in Mind.pdf
+C042,C,42,Waimanolo Blues  (Country Comfort),Waimanolo Blues  (Country Comfort),,review,Waimanolo Blues.pdf
+C043,C,43,Waltz About Whiskey (Watchhouse),Waltz About Whiskey (Watchhouse),,review,
+C044,C,44,Will You Love Me Tomorrow; (The Shirelles; Dave Mason),Will You Love Me Tomorrow; (The Shirelles; Dave Mason),,review,
+A001,A,1,Are You Lonesome Tonight (Leon Redbone),Are You Lonesome Tonight (Leon Redbone),,review,
+A002,A,2,Bargain Store (Dolly Parton; Dan Bettridge),Bargain Store (Dolly Parton; Dan Bettridge),,review,
+A003,A,3,Bear Necessities  (Disney: “Jungle Book”),Bear Necessities  (Disney: “Jungle Book”),,review,Bear Necessities.pdf
+A004,A,4,Big Joe Mufferaw (Stompin’ Tom Connors),Big Joe Mufferaw (Stompin’ Tom Connors),,review,Big Joe Mufferaw.pdf
+A005,A,5,Blue Umbrella (John Prine),Blue Umbrella (John Prine),,review,Blue Umbrella - in A.pdf
+A006,A,6,Boots of Spanish Leather (Bob Dylan),Boots of Spanish Leather (Bob Dylan),,review,
+A007,A,7,Champs Élysées (Joe Dassin),Champs Élysées (Joe Dassin),,review,Champs-Élysées-2.pdf
+A008,A,8,Chocolate Jesus  (Tom Waits),Chocolate Jesus  (Tom Waits),,review,Chocolate Jesus.pdf
+A009,A,9,Christmas Island (Leon Redbone),Christmas Island (Leon Redbone),,review,
+A010,A,10,Dark Hollow  (Grateful Dead),Dark Hollow  (Grateful Dead),,review,Dark Hollow.pdf
+A011,A,11,Diamonds & Gold  (Tom Waits),Diamonds & Gold  (Tom Waits),,review,
+A012,A,12,Down Among the Sheltering Palms (Johnny Mercer; Chordettes),Down Among the Sheltering Palms (Johnny Mercer; Chordettes),,review,Down Among the Sheltering Palms.pdf
+A013,A,13,Etta’s Tune  (Rosanne Cash),Etta’s Tune  (Rosanne Cash),,review,
+A014,A,14,For What It’s Worth (Buffalo Springfield),For What It’s Worth (Buffalo Springfield),,review,
+A015,A,15,Girl of the North Country (Bob Dylan),Girl of the North Country (Bob Dylan),,review,
+A016,A,16,Goodnight Moon (Shivaree),Goodnight Moon (Shivaree),,review,
+A017,A,17,I Just Want to Dance with You (John Prine),I Just Want to Dance with You (John Prine),,review,
+A018,A,18,I Quit My Job (Old Man Luedecke),I Quit My Job (Old Man Luedecke),,review,
+A019,A,19,L.A. Freeway  (Guy Clark),L.A. Freeway  (Guy Clark),,review,
+A020,A,20,Last Cheater’s Waltz (Sonny Throckmorton; Emmylou Harris),Last Cheater’s Waltz (Sonny Throckmorton; Emmylou Harris),,review,
+A021,A,21,Laughing River (Greg Brown),Laughing River (Greg Brown),,review,
+A022,A,22,Life During Wartime  (Talking Heads),Life During Wartime  (Talking Heads),,review,
+A023,A,23,Lifelong Lullaby  (Will Derryberry),Lifelong Lullaby  (Will Derryberry),,review,
+A024,A,24,A Little Bird  (Blue Lu Barker; Maria Muldaur),A Little Bird  (Blue Lu Barker; Maria Muldaur),,review,
+A025,A,25,The Long Way Home  (Tom Waits),The Long Way Home  (Tom Waits),,review,
+A026,A,26,Marshmallow World,Marshmallow World,,review,
+A027,A,27,Mexican Home (John Prine [Live version]),Mexican Home (John Prine [Live version]),,review,
+A028,A,28,Navajo Rug  (Ian Tyson),Navajo Rug  (Ian Tyson),,review,
+A029,A,29,No Lonesome Tune  (Townes van Zandt),No Lonesome Tune  (Townes van Zandt),,review,
+A030,A,30,Old Town Road (Lil Nas X + Billy Joe Cyrus),Old Town Road (Lil Nas X + Billy Joe Cyrus),,review,Old Town Road.pdf
+A031,A,31,Own Heart’s Delight  (Ian Tyson),Own Heart’s Delight  (Ian Tyson),,review,
+A032,A,32,Pancho and Lefty (Townes van Zandt; Willie Nelson),Pancho and Lefty (Townes van Zandt; Willie Nelson),,review,
+A033,A,33,Pizzirico (Mavericks),Pizzirico (Mavericks),,review,
+A034,A,34,Put Me On The Trail To Carolina  (Delmore Bros.; Louvin Bros.),Put Me On The Trail To Carolina  (Delmore Bros.; Louvin Bros.),,review,
+A035,A,35,Ragpicker’s Dream  (Mark Knopfler),Ragpicker’s Dream  (Mark Knopfler),,review,
+A036,A,36,Return of the Grievous Angel  (Gram Parsons),Return of the Grievous Angel  (Gram Parsons),,review,
+A037,A,37,The Roswell Incident  (Suzanne McDermott),The Roswell Incident  (Suzanne McDermott),,review,
+A038,A,38,Sailing to Philadelphia  (Mark Knopfler [Live version from Privateering]),Sailing to Philadelphia  (Mark Knopfler [Live version from Privateering]),,review,
+A039,A,39,Sam Stone (John Prine),Sam Stone (John Prine),,review,
+A040,A,40,Something Stupid  (Frank + Nancy Sinatra; Lola Marsh; Mavericks),Something Stupid  (Frank + Nancy Sinatra; Lola Marsh; Mavericks),,review,
+A041,A,41,Stand By Me  (Ben E. King; Tracy Chapman [Live]),Stand By Me  (Ben E. King; Tracy Chapman [Live]),,review,Stand by Me-2.pdf
+A042,A,42,Sweet Sunny South (Trad.),Sweet Sunny South (Trad.),,review,
+A043,A,43,Tell It To Me  (Tom Waits),Tell It To Me  (Tom Waits),,review,
+A044,A,44,Tennessee Whiskey,Tennessee Whiskey,,review,Tennessee Whiskey.pdf
+A045,A,45,Third Rate Romance (Amazing Rhythm Aces; Rosanne Cash),Third Rate Romance (Amazing Rhythm Aces; Rosanne Cash),,review,
+A046,A,46,This Must Be the Place (Naïve Melody) (Talking Heads; Scott Bradlee’s Postmodern Jukebox),This Must Be the Place (Naïve Melody) (Talking Heads; Scott Bradlee’s Postmodern Jukebox),,review,
+A047,A,47,2:19  (Tom Waits),2:19  (Tom Waits),,review,
+A048,A,48,The Vanagon Song,The Vanagon Song,,review,
+A049,A,49,Wasting My Love On You (Annette Hanshaw),Wasting My Love On You (Annette Hanshaw),,review,
+U001,Unknown,1,2-19 (Waits),2-19 (Waits),,include,2-19 (Waits).pdf
+U002,Unknown,2,Aint no sunshine,Aint no sunshine,,include,Aint no sunshine.pdf
+U003,Unknown,3,All About You,All About You,,include,All About You.pdf
+E001,E,1,Are You Lonesome Tonight (Redbone version),Are You Lonesome Tonight (Redbone version),,review,Are You Lonesome Tonight (Redbone version) in E.pdf
+U004,Unknown,4,Bargain Store (Parton),Bargain Store (Parton),,review,Bargain Store (Parton) .pdf
+U005,Unknown,5,Big Branch,Big Branch,,include,Big Branch.pdf
+U006,Unknown,6,Big Yellow Taxi (chords),Big Yellow Taxi (chords),,include,Big Yellow Taxi (chords).pdf
+U007,Unknown,7,Bird Song (C) lyrics and chords,Bird Song (C) lyrics and chords,,include,Bird Song (C) lyrics and chords.pdf
+U008,Unknown,8,Boats to Build (Guy Clark),Boats to Build (Guy Clark),,review,Boats to Build (Guy Clark).pdf
+G061,G,61,Boots of Spanish Leather (xJamie),Boots of Spanish Leather (xJamie),,review,Boots of Spanish Leather (xJamie) (G).pdf
+U009,Unknown,9,"Both Sides Now E, lyrics","Both Sides Now E, lyrics",,include,"Both Sides Now E, lyrics.pdf"
+U010,Unknown,10,Bruised Orange (Chain of Sorrow) - Prine,Bruised Orange (Chain of Sorrow) - Prine,,include,Bruised Orange (Chain of Sorrow) - Prine.pdf
+A050,A,50,Buried Alive,Buried Alive,,include,Buried Alive (A).pdf
+D022,D,22,Button Up Your Overcoat,Button Up Your Overcoat,,include,Button Up Your Overcoat (D).pdf
+U011,Unknown,11,Can t Let Go (Lucinda Williams),Can t Let Go (Lucinda Williams),,include,Can_t Let Go (Lucinda Williams).pdf
+U012,Unknown,12,Cheap Thrills,Cheap Thrills,,include,Cheap Thrills-3.pdf
+U013,Unknown,13,Christmas Island (Redbone arrangement),Christmas Island (Redbone arrangement),,include,Christmas Island (Redbone arrangement).pdf
+U014,Unknown,14,Coventry Carol (Em) chords,Coventry Carol (Em) chords,,include,Coventry Carol (Em) chords.pdf
+U015,Unknown,15,DEARLY DEPARTED,DEARLY DEPARTED,,include,DEARLY DEPARTED 2.pdf
+U016,Unknown,16,Delta Mama Blues (Van Zandt),Delta Mama Blues (Van Zandt),,review,Delta Mama Blues (Van Zandt).pdf
+U017,Unknown,17,Detectorists (Johnny Flynn),Detectorists (Johnny Flynn),,include,Detectorists (Johnny Flynn).pdf
+U018,Unknown,18,Diamonds and Gold,Diamonds and Gold,,review,Diamonds and Gold.pdf
+U019,Unknown,19,Don t Think Twice (Dylan),Don t Think Twice (Dylan),,review,Don_t Think Twice (Dylan).pdf
+U020,Unknown,20,Don t You Take it Too Bad (Van Zandt),Don t You Take it Too Bad (Van Zandt),,review,Don_t You Take it Too Bad (Van Zandt).pdf
+U021,Unknown,21,Dont Worry About the Government,Dont Worry About the Government,,review,Dont Worry About the Government.pdf
+D023,D,23,Dream of the Drowned Submariner,Dream of the Drowned Submariner,,include,Dream of the Drowned Submariner - in D.pdf
+U022,Unknown,22,Everything Stays (single sheet),Everything Stays (single sheet),,review,Everything Stays (single sheet).pdf
+U023,Unknown,23,Fare Thee Well (Dink’s Song),Fare Thee Well (Dink’s Song),,include,Fare Thee Well (Dink’s Song) 2.pdf
+U024,Unknown,24,favourite things,favourite things,,include,favourite things 2.pdf
+U025,Unknown,25,fever,fever,,include,fever.pdf
+U026,Unknown,26,Fireman Sam,Fireman Sam,,review,Fireman Sam.pdf
+U027,Unknown,27,Fish and Whistle C,Fish and Whistle C,,review,Fish and Whistle C.pdf
+U028,Unknown,28,Fish and Whistle G,Fish and Whistle G,,review,Fish and Whistle G.pdf
+U029,Unknown,29,For What Its Worth,For What Its Worth,,review,For What Its Worth 3.pdf
+U030,Unknown,30,Frankie was a good girl,Frankie was a good girl,,include,Frankie was a good girl.pdf
+U031,Unknown,31,Gentle on My Mind (John Hartford),Gentle on My Mind (John Hartford),,review,Gentle on My Mind (John Hartford).pdf
+U032,Unknown,32,Give Me More of Your Kisses,Give Me More of Your Kisses,,review,Give Me More of Your Kisses.pdf
+U033,Unknown,33,Glory of True Love (Prine),Glory of True Love (Prine),,review,Glory of True Love (Prine).pdf
+U034,Unknown,34,"Goin Down This Road Feelin Bad (trad, Eric Bibb)","Goin Down This Road Feelin Bad (trad, Eric Bibb)",,review,"Goin Down This Road Feelin Bad (trad, Eric Bibb).pdf"
+U035,Unknown,35,Goodnight Loving Trail (in C),Goodnight Loving Trail (in C),,review,Goodnight Loving Trail (in C).pdf
+U036,Unknown,36,Goodnight Moon (in Bm),Goodnight Moon (in Bm),,review,Goodnight Moon (in Bm).pdf
+U037,Unknown,37,Grandpa was a Carpenter,Grandpa was a Carpenter,,include,Grandpa was a Carpenter.pdf
+U038,Unknown,38,Green Green Rocky Road,Green Green Rocky Road,,review,Green Green Rocky Road.pdf
+U039,Unknown,39,Gum Tree Canoe (John Hartford),Gum Tree Canoe (John Hartford),,review,Gum Tree Canoe (John Hartford).pdf
+U040,Unknown,40,Happy Together,Happy Together,,include,Happy Together.pdf
+U041,Unknown,41,Harlem River Blues (JT Earle),Harlem River Blues (JT Earle),,review,Harlem River Blues (JT Earle).pdf
+U042,Unknown,42,Heart of Saturday Night (Waits),Heart of Saturday Night (Waits),,review,Heart of Saturday Night (Waits).pdf
+U043,Unknown,43,Hello My Baby - D2,Hello My Baby - D2,,review,Hello My Baby - D2.pdf
+U044,Unknown,44,Hesitation Blues,Hesitation Blues,,include,Hesitation Blues.pdf
+U045,Unknown,45,Hickory Wind (Gram Parsons),Hickory Wind (Gram Parsons),,include,Hickory Wind (Gram Parsons).pdf
+D024,D,24,Hold On (Waits) =,Hold On (Waits) =,,include,Hold On (Waits) = in D.pdf
+U046,Unknown,46,How Deep is the Ocean (in C),How Deep is the Ocean (in C),,review,How Deep is the Ocean (in C).pdf
+U047,Unknown,47,I Don t Know (Smither),I Don t Know (Smither),,include,I Don_t Know (Smither).pdf
+U048,Unknown,48,I Just Want to Dance with You (Prine),I Just Want to Dance with You (Prine),,review,I Just Want to Dance with You (Prine).pdf
+U049,Unknown,49,I Quit My Job by Old Man Luedecke,I Quit My Job by Old Man Luedecke,,include,I Quit My Job by Old Man Luedecke 4.pdf
+U050,Unknown,50,If I Had a Boat (Lovett),If I Had a Boat (Lovett),,include,If I Had a Boat (Lovett).pdf
+U051,Unknown,51,In Hell Ill be in Good Company,In Hell Ill be in Good Company,,review,In Hell Ill be in Good Company 2.pdf
+U052,Unknown,52,Istanbul,Istanbul,,include,Istanbul.pdf
+U053,Unknown,53,I’ll Never Get Enough,I’ll Never Get Enough,,include,I’ll Never Get Enough.pdf
+U054,Unknown,54,JASPER,JASPER,,include,JASPER-3.pdf
+U055,Unknown,55,Keep My Skillet Good n Greasy,Keep My Skillet Good n Greasy,,include,Keep My Skillet Good n Greasy.pdf
+U056,Unknown,56,Kettle Valley Line,Kettle Valley Line,,include,Kettle Valley Line.pdf
+U057,Unknown,57,Key for keys,Key for keys,,exclude,Key for keys.pdf
+U058,Unknown,58,LA Freeway (Guy Clark),LA Freeway (Guy Clark),,include,LA Freeway (Guy Clark).pdf
+U059,Unknown,59,Last Cheater s Waltz (in A),Last Cheater s Waltz (in A),,review,Last Cheater_s Waltz (in A).pdf
+U060,Unknown,60,Laughing River (Greg Brown) (in D),Laughing River (Greg Brown) (in D),,include,Laughing River (Greg Brown) (in D).pdf
+U061,Unknown,61,LIfelong Lullaby (in A),LIfelong Lullaby (in A),,review,LIfelong Lullaby (in A).pdf
+U062,Unknown,62,Little Bird Told Me,Little Bird Told Me,,review,Little Bird Told Me.pdf
+G062,G,62,Lonesome Road - People Stand Together,Lonesome Road - People Stand Together,,include,Lonesome Road - People Stand Together (G).pdf
+U063,Unknown,63,Long Way Home - Waits,Long Way Home - Waits,,review,Long Way Home - Waits.pdf
+U064,Unknown,64,louis-collins-lyrics chords,louis-collins-lyrics chords,,include,louis-collins-lyrics chords.pdf
+U065,Unknown,65,Love This Town,Love This Town,,include,Love This Town-2.pdf
+U066,Unknown,66,Love Will Tear Us Apart Again – Joy Division,Love Will Tear Us Apart Again – Joy Division,,include,Love Will Tear Us Apart Again – Joy Division.pdf
+U067,Unknown,67,Mexican Home (Prine),Mexican Home (Prine),,review,Mexican Home (Prine).pdf
+U068,Unknown,68,Mule Skinner Blues,Mule Skinner Blues,,review,Mule Skinner Blues.pdf
+U069,Unknown,69,Music - ALL,Music - ALL,,exclude,Music - ALL.pdf
+U070,Unknown,70,Naive Melody,Naive Melody,,include,Naive Melody.pdf
+U071,Unknown,71,Navajo Rug-revised,Navajo Rug-revised,,review,Navajo Rug-revised 2.pdf
+U072,Unknown,72,Nine Pound Hammer – John Prine,Nine Pound Hammer – John Prine,,review,Nine Pound Hammer – John Prine.pdf
+U073,Unknown,73,No Lonesome Tune (Van Zandt),No Lonesome Tune (Van Zandt),,review,No Lonesome Tune (Van Zandt).pdf
+U074,Unknown,74,No Place to Fall (Van Zandt),No Place to Fall (Van Zandt),,review,No Place to Fall (Van Zandt).pdf
+U075,Unknown,75,OHIO,OHIO,,include,OHIO.pdf
+U076,Unknown,76,Ol 55 (Waits),Ol 55 (Waits),,include,Ol 55 (Waits).pdf
+U077,Unknown,77,Old Home Place,Old Home Place,,review,Old Home Place.pdf
+U078,Unknown,78,Old Number Seven,Old Number Seven,,review,Old Number Seven.pdf
+C045,C,45,Old Time River Man (Hartford),Old Time River Man (Hartford),,review,Old Time River Man (Hartford) in C.pdf
+U079,Unknown,79,Old Zeb-jamie,Old Zeb-jamie,,review,Old Zeb-jamie.pdf
+U080,Unknown,80,Other Side of Town (Prine),Other Side of Town (Prine),,review,Other Side of Town (Prine).pdf
+U081,Unknown,81,Own Hearts Delight (Ian Tyson),Own Hearts Delight (Ian Tyson),,review,Own Hearts Delight (Ian Tyson).pdf
+U082,Unknown,82,Pancho and Lefty-revised3,Pancho and Lefty-revised3,,review,Pancho and Lefty-revised3.pdf
+U083,Unknown,83,Pizziricco,Pizziricco,,review,Pizziricco.pdf
+U084,Unknown,84,Proud Mary,Proud Mary,,include,Proud Mary.pdf
+D025,D,25,Put Me on the Trail to Carolina (Delmore Bros),Put Me on the Trail to Carolina (Delmore Bros),,review,Put Me on the Trail to Carolina (Delmore Bros) in D.pdf
+U085,Unknown,85,Ragpickers Dream (in F),Ragpickers Dream (in F),,review,Ragpickers Dream (in F).pdf
+U086,Unknown,86,Rebel Jesus (Jackson Browne),Rebel Jesus (Jackson Browne),,include,Rebel Jesus (Jackson Browne)-2.pdf
+U087,Unknown,87,Red-Winged Blackbird,Red-Winged Blackbird,,include,Red-Winged Blackbird.pdf
+U088,Unknown,88,Return of the Grievous Angel-c,Return of the Grievous Angel-c,,review,Return of the Grievous Angel-c.pdf
+U089,Unknown,89,Rollin in my Sweet Babys Arms,Rollin in my Sweet Babys Arms,,include,Rollin in my Sweet Babys Arms.pdf
+U090,Unknown,90,Roswell Incident,Roswell Incident,,review,Roswell Incident.pdf
+A051,A,51,Sailing to Philadelphia (Knopfler),Sailing to Philadelphia (Knopfler),,review,Sailing to Philadelphia (Knopfler) - in A.pdf
+U091,Unknown,91,Sam Stone-c,Sam Stone-c,,review,Sam Stone-c.pdf
+U092,Unknown,92,Same Thing Happened to Me,Same Thing Happened to Me,,include,Same Thing Happened to Me.pdf
+U093,Unknown,93,Secondary Waltz-c,Secondary Waltz-c,,review,Secondary Waltz-c.pdf
+U094,Unknown,94,Shankill Butchers-c2,Shankill Butchers-c2,,review,Shankill Butchers-c2.pdf
+U095,Unknown,95,Sick Sober and Sorry (Frizzell),Sick Sober and Sorry (Frizzell),,review,Sick Sober and Sorry (Frizzell).pdf
+C046,C,46,Sin City (Gram Parsons),Sin City (Gram Parsons),,include,Sin City (Gram Parsons) - in C.pdf
+E002,E,2,Sitting on Top of the World,Sitting on Top of the World,,include,Sitting on Top of the World (E).pdf
+U096,Unknown,96,So Long To The Kicking Horse Canyon,So Long To The Kicking Horse Canyon,,include,So Long To The Kicking Horse Canyon.pdf
+D026,D,26,Something Stupid,Something Stupid,,review,Something Stupid in D.pdf
+U097,Unknown,97,Song For A Winter s Night (Lightfoot),Song For A Winter s Night (Lightfoot),,review,Song For A Winter_s Night (Lightfoot).pdf
+U098,Unknown,98,Song for Gale-jamie,Song for Gale-jamie,,review,Song for Gale-jamie.pdf
+U099,Unknown,99,Souvenirs (Prine),Souvenirs (Prine),,review,Souvenirs (Prine).pdf
+U100,Unknown,100,Spanish Pipedream2,Spanish Pipedream2,,review,Spanish Pipedream2.pdf
+U101,Unknown,101,Spiritual Healing (Toots),Spiritual Healing (Toots),,review,Spiritual Healing (Toots).pdf
+U102,Unknown,102,Stand My Ground,Stand My Ground,,include,Stand My Ground.pdf
+U103,Unknown,103,Stay (Kevin Fox),Stay (Kevin Fox),,include,Stay (Kevin Fox).pdf
+U104,Unknown,104,Streets of London (McTell),Streets of London (McTell),,review,Streets of London (McTell).pdf
+D027,D,27,Studying for Sustainability,Studying for Sustainability,,include,Studying for Sustainability (D).pdf
+U105,Unknown,105,Sudbury Saturday Night – Stompin’ Tom Connors,Sudbury Saturday Night – Stompin’ Tom Connors,,review,Sudbury Saturday Night – Stompin’ Tom Connors.pdf
+U106,Unknown,106,Summers End-c2,Summers End-c2,,review,Summers End-c2.pdf
+U107,Unknown,107,Sweet City Woman,Sweet City Woman,,include,Sweet City Woman.pdf
+U108,Unknown,108,Sweet Sunny South-A,Sweet Sunny South-A,,review,Sweet Sunny South-A.pdf
+U109,Unknown,109,Tall Buildings (Hartford),Tall Buildings (Hartford),,review,Tall Buildings (Hartford).pdf
+U110,Unknown,110,Tell It to Me (Waits),Tell It to Me (Waits),,review,Tell It to Me (Waits).pdf
+U111,Unknown,111,That s the Way that the World Goes Round (Prine),That s the Way that the World Goes Round (Prine),,review,That_s the Way that the World Goes Round (Prine).pdf
+U112,Unknown,112,Thick O Fog,Thick O Fog,,include,Thick O_Fog 3.pdf
+U113,Unknown,113,Third Rate Romance (in D),Third Rate Romance (in D),,review,Third Rate Romance (in D).pdf
+U114,Unknown,114,Tomorrow is a Long Time (Dylan),Tomorrow is a Long Time (Dylan),,review,Tomorrow is a Long Time (Dylan).pdf
+U115,Unknown,115,Under a Stormy Sky,Under a Stormy Sky,,review,Under a Stormy Sky.pdf
+U116,Unknown,116,Vanagon Song,Vanagon Song,,review,Vanagon Song.pdf
+U117,Unknown,117,Waltz About Whiskey (Mandolin Orange),Waltz About Whiskey (Mandolin Orange),,review,Waltz About Whiskey (Mandolin Orange).pdf
+U118,Unknown,118,WANNA BE LIKE YOU,WANNA BE LIKE YOU,,review,WANNA BE LIKE YOU-3.pdf
+D028,D,28,Want You Back,Want You Back,,include,Want You Back (D).pdf
+U119,Unknown,119,Wellerman Shanty,Wellerman Shanty,,include,Wellerman Shanty.pdf
+U120,Unknown,120,Will You Love Me Tomorrow (Shirelles),Will You Love Me Tomorrow (Shirelles),,review,Will You Love Me Tomorrow (Shirelles).pdf
+U121,Unknown,121,You aint goin nowhere,You aint goin nowhere,,review,You aint goin nowhere.pdf
+G063,G,63,You Are My Sunshine,You Are My Sunshine,,include,You Are My Sunshine (G).pdf
+U122,Unknown,122,You really got a hold on me,You really got a hold on me,,include,You really got a hold on me.pdf
+U123,Unknown,123,You ve Got a Friend in Me,You ve Got a Friend in Me,,review,You_ve Got a Friend in Me.pdf
