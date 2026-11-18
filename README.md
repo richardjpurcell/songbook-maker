@@ -20,7 +20,7 @@ python scripts/build_songbook.py
 open output/songbook.pdf
 ```
 
-The report is `output/build_report.txt`. It shows curated charts, additional unreviewed PDFs, and any individual song files that could not be included. The index/compilation files `Key for keys.pdf` and `Music - ALL.pdf` are intentionally excluded.
+The report is `output/build_report.txt`. It shows curated charts, additional unreviewed PDFs, and any individual song files that could not be included. It also lists completely blank source pages skipped during assembly and short/sparse pages retained for manual review. Original source PDFs are never changed. The index/compilation files `Key for keys.pdf` and `Music - ALL.pdf` are intentionally excluded.
 
 ## Add a PDF
 

@@ -29,6 +29,38 @@ LINK = (0.10, 0.31, 0.56)
 NON_SONG_PDFS = {'Key for keys.pdf', 'Music - ALL.pdf'}
 SUPPLEMENT_KEY = 'Unreviewed PDFs'
 
+# Conservative source-page inspection. Blank means effectively no visible ink,
+# not merely a short continuation. All-originally-blank documents retain one page.
+BLANK_INK_FRACTION = 0.0
+SPARSE_INK_FRACTION = 0.006
+
+
+def source_page_ink_fraction(page):
+    """Sample complete source page at low resolution, including raster artwork."""
+    pix = page.get_pixmap(matrix=pymupdf.Matrix(0.7, 0.7),
+                          colorspace=pymupdf.csGRAY, alpha=False)
+    samples = pix.samples
+    return sum(v < 245 for v in samples) / max(1, len(samples))
+
+
+def inspect_source_pages(source, name, report):
+    """Return source indexes to print, keeping uncertain/sparse content."""
+    ratios = [source_page_ink_fraction(source[i]) for i in range(source.page_count)]
+    keep = [i for i, ratio in enumerate(ratios) if ratio > BLANK_INK_FRACTION]
+    if not keep:
+        report.append(f'CHECK (all source pages appear blank; retained): {name}')
+        keep = list(range(source.page_count))
+    else:
+        for i, ratio in enumerate(ratios):
+            if i not in keep:
+                report.append(f'SKIPPED blank source page: {name} | source page {i + 1} '
+                              f'| dark pixel fraction {ratio:.5%}')
+    for i in keep:
+        if ratios[i] < SPARSE_INK_FRACTION:
+            report.append(f'REVIEW sparse source page (kept): {name} | source page {i + 1} '
+                          f'| dark pixel fraction {ratios[i]:.3%}')
+    return keep
+
 
 
 def printable(value):
@@ -221,6 +253,7 @@ def build():
     toc_pages = plan_toc(keys, groups)
     doc = pymupdf.open()
     pending_links = []
+    page_audit = []
     for toc_idx, rows in enumerate(toc_pages):
         page = doc.new_page(width=PAGE.width, height=PAGE.height)
         heading(page, 'SONGBOOK - CONTENTS')
@@ -252,7 +285,11 @@ def build():
             else:
                 source = None
             try:
-                for source_page in range(count):
+                if source is not None:
+                    source_pages = inspect_source_pages(source, item['file'], page_audit)
+                else:
+                    source_pages = [0]
+                for source_page in source_pages:
                     page = doc.new_page(width=PAGE.width, height=PAGE.height)
                     header_left = (f"{item['display_id']}    UNREVIEWED ARRANGEMENT"
                                    if item.get('is_supplemental') else
@@ -306,6 +343,9 @@ def build():
         f'PDF pages: {sum(1 for _ in pymupdf.open(OUTPUT))}',
         f'Unrepresented individual PDFs: {len([f for f in unlisted if f not in NON_SONG_PDFS])}',
         f'Excluded compilation/index PDFs: {len([f for f in NON_SONG_PDFS if (SHEETS / f).is_file()])}',
+        f'Skipped blank source pages: {sum(s.startswith("SKIPPED") for s in page_audit)}',
+        f'Sparse source pages kept for review: {sum(s.startswith("REVIEW sparse") for s in page_audit)}',
+        '', 'PAGE LAYOUT AUDIT', '-----------------', *(page_audit or ['None']),
         '', 'WARNINGS', '--------', *(warnings or ['None']),
         '', 'UNASSIGNED SOURCE PDFs', '----------------------', *(unlisted or ['None']),
     ]
