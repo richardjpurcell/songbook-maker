@@ -67,10 +67,13 @@ def load_entries():
     with CATALOGUE.open(newline='', encoding='utf-8-sig') as handle:
         reader = csv.DictReader(handle)
         columns = set(reader.fieldnames or [])
-        required = {'key', 'title', 'status', 'source_pdf'}
+        required = {'song_uid', 'key', 'title', 'status', 'source_pdf'}
         if not required.issubset(columns):
             raise ValueError(f'Missing catalogue columns: {sorted(required - columns)}')
         rows = list(reader)
+    uids = [(r.get('song_uid') or '').strip() for r in rows]
+    if any(not re.fullmatch(r'S\d{5,}', uid) for uid in uids) or len(uids) != len(set(uids)):
+        raise ValueError('song_uid must be present and unique for every catalogue record')
 
     keys = []
     selected = []
@@ -83,6 +86,7 @@ def load_entries():
         title = (row.get('title') or row.get('toc_entry') or '').strip()
         filename = (row.get('source_pdf') or '').strip()
         ident = (row.get('id') or f'row {n}').strip()
+        uid = row['song_uid'].strip()
         if status not in ('include', 'placeholder', 'review', 'exclude'):
             warnings.append(f'{ident}: unrecognized status {status!r}; omitted')
             continue
@@ -97,8 +101,16 @@ def load_entries():
             warnings.append(f'{ident}: nonstandard key {key!r}; retained as section label')
         if key not in keys:
             keys.append(key)
-        item = {'title': title, 'key': key, 'file': filename, 'source_id': ident,
-                'status': status, 'row_index': n, 'position': row.get('position', '')}
+        capo = (row.get('capo_fret') or '').strip()
+        shapes = (row.get('chord_shapes_key') or '').strip()
+        if capo or shapes:
+            if not (capo.isdigit() and 0 <= int(capo) <= 12 and
+                    re.fullmatch(r'[A-G](?:#|b)?m?', shapes)):
+                warnings.append(f'{ident}: invalid capo/chord-shape metadata; note omitted')
+                capo, shapes = '', ''
+        item = {'title': title, 'key': key, 'file': filename, 'song_uid': uid, 'source_id': ident,
+                'status': status, 'row_index': n, 'position': row.get('position', ''),
+                'capo_fret': capo, 'chord_shapes_key': shapes}
         if status == 'include':
             if not filename:
                 item['status'] = 'placeholder'
@@ -121,6 +133,7 @@ def load_entries():
                     warnings.append(f'{ident}: unreadable PDF {filename!r} ({exc}); blank page created')
         selected.append(item)
 
+    # Display IDs are generated from the selected songs, never from legacy IDs.
     # Preserve existing key order, but always send Unknown to the end.
     keys = [key for key in keys if key != 'Unknown'] + (['Unknown'] if 'Unknown' in keys else [])
     groups = {key: [] for key in keys}
@@ -204,6 +217,9 @@ def build():
                 for source_page in range(count):
                     page = doc.new_page(width=PAGE.width, height=PAGE.height)
                     header_left = f"{item['display_id']}    KEY: {key}"
+                    if item['capo_fret'] and item['chord_shapes_key']:
+                        header_left += (f"    |    {item['chord_shapes_key']} shapes, "
+                                        f"Capo {item['capo_fret']}")
                     heading(page, header_left)
                     page.insert_text((LEFT, 81), trim(item['title'], RIGHT-LEFT, 9), fontsize=9, color=MUTED)
                     if source is not None:

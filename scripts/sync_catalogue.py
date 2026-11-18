@@ -4,7 +4,7 @@ Usage:
     python scripts/sync_catalogue.py          # preview
     python scripts/sync_catalogue.py --apply  # create backup and apply
 
-New unambiguous PDFs are added to the catalogue. Uncertain filename matches
+New unambiguous PDFs are added to the catalogue with permanent song_uid values. Uncertain filename matches
 are marked 'review' and reported rather than silently selected. An unknown
 key is represented as 'Unknown' (section ID prefix U).
 """
@@ -24,7 +24,7 @@ PDF_DIR = ROOT / "data/song_sheets"
 REPORT = ROOT / "output/sync_report.txt"
 BACKUP_DIR = ROOT / "output/backups"
 
-REQUIRED = {"id", "key", "position", "toc_entry", "title", "artist", "status", "source_pdf"}
+REQUIRED = {"song_uid", "id", "key", "position", "toc_entry", "title", "artist", "status", "source_pdf", "key_source"}
 KNOWN_KEYS = {n + suffix for n in "ABCDEFG" for suffix in ("", "#", "b", "m", "#m", "bm")}
 
 
@@ -66,6 +66,9 @@ def read_catalogue():
     ids = [r["id"].strip() for r in rows]
     if len(ids) != len(set(ids)):
         raise SystemExit("Duplicate catalogue IDs; no changes made.")
+    uids = [r["song_uid"].strip() for r in rows]
+    if any(not re.fullmatch(r"S\d{5,}", uid) for uid in uids) or len(uids) != len(set(uids)):
+        raise SystemExit("Missing, invalid, or duplicate permanent song IDs; no changes made.")
     return rows, fields
 
 
@@ -87,6 +90,7 @@ def main():
     assigned = {r["source_pdf"].strip() for r in songs if r["source_pdf"].strip()}
     positions = Counter()
     used_ids = {r["id"].strip() for r in songs}
+    next_uid = max((int(r["song_uid"][1:]) for r in songs), default=0) + 1
     for row in songs:
         try:
             positions[row["key"].strip()] = max(positions[row["key"].strip()], int(row["position"]))
@@ -123,9 +127,11 @@ def main():
             candidate_id = f"{prefix}{positions[key]:03d}"
         used_ids.add(candidate_id)
         record = {column: "" for column in fields}
-        record.update({"id": candidate_id, "key": key, "position": str(positions[key]),
+        record.update({"song_uid": f"S{next_uid:05d}", "key_source": "unknown" if key == "Unknown" else "imported_unverified",
+                       "id": candidate_id, "key": key, "position": str(positions[key]),
                        "toc_entry": name, "title": name, "artist": "",
                        "status": "review" if ambiguous else "include", "source_pdf": filename})
+        next_uid += 1
         songs.append(record)
         created.append(record)
         if ambiguous:
