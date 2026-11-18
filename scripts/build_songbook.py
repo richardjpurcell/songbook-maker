@@ -63,6 +63,95 @@ def inspect_source_pages(source, name, report):
 
 
 
+# Content-aware enlargement is opt-in for well-separated, compact chart pages.
+# Rendered ink bounds include text, scans, drawings and handwritten annotations.
+SCALE_SAMPLE = 0.7
+SCALE_MARGIN_PT = 22
+MIN_SCALE_GAIN = 1.18
+MAX_SCALE_GAIN = 1.65
+# Continuation pages occupying less than this fraction of page height retain
+# their original placement even when the words are not especially sparse.
+MIN_CONTINUATION_HEIGHT_FRACTION = 0.38
+
+
+def choose_source_clip(page, ink_fraction):
+    """Return (source crop, gain) only when a safely padded enlargement fits.
+
+    Sparse continuation pages, extremely long/narrow layouts, and pages whose
+    ink reaches the edges remain unchanged. Original PDFs are never modified.
+    """
+    if ink_fraction < 0.003 or (ink_fraction < SPARSE_INK_FRACTION and page.number > 0):
+        return None
+    # Already-large type does not benefit from enlargement.
+    for block in page.get_text('dict').get('blocks', []):
+        for line in block.get('lines', []):
+            if any(span.get('size', 0) >= 13 for span in line.get('spans', [])):
+                return None
+    pix = page.get_pixmap(matrix=pymupdf.Matrix(SCALE_SAMPLE, SCALE_SAMPLE),
+                          colorspace=pymupdf.csGRAY, alpha=False)
+    width, height = pix.width, pix.height
+    data = pix.samples
+    left, top, right, bottom = width, height, -1, -1
+    for y in range(height):
+        row = data[y * pix.stride:y * pix.stride + width]
+        # Threshold deliberately includes pale writing and scanned pencil marks.
+        dark = [i for i, pixel in enumerate(row) if pixel < 245]
+        if dark:
+            left = min(left, dark[0])
+            right = max(right, dark[-1])
+            top = min(top, y)
+            bottom = y
+    if right < left:
+        return None
+    # A short final verse may have enough dark pixels to pass the sparse-ink
+    # threshold, yet scaling it to fill the page makes it visually jarring.
+    # Check the vertical ink extent on subsequent pages, independent of density.
+    ink_height_fraction = (bottom - top + 1) / height
+    if page.number > 0 and ink_height_fraction < MIN_CONTINUATION_HEIGHT_FRACTION:
+        return None
+    # For safe cropping, do not enlarge any page whose ink touches the edge.
+    edge_guard = max(2, round(3 * SCALE_SAMPLE))
+    if min(left, top, width - 1 - right, height - 1 - bottom) < edge_guard:
+        return None
+    source_rect = page.rect
+    sx, sy = source_rect.width / width, source_rect.height / height
+    clip = pymupdf.Rect(left * sx, top * sy,
+                        (right + 1) * sx, (bottom + 1) * sy)
+    clip = clip + (-SCALE_MARGIN_PT, -SCALE_MARGIN_PT,
+                   SCALE_MARGIN_PT, SCALE_MARGIN_PT)
+    clip &= source_rect
+    if clip.is_empty or clip.width <= 0 or clip.height <= 0:
+        return None
+    # Compare fit scales: whole source page versus padded ink bounding box.
+    standard = min(BODY.width / source_rect.width, BODY.height / source_rect.height)
+    cropped = min(BODY.width / clip.width, BODY.height / clip.height)
+    gain = cropped / standard
+    if gain < MIN_SCALE_GAIN:
+        return None
+    if gain > MAX_SCALE_GAIN:
+        # Expand crop around the ink, rather than enlarging text excessively.
+        factor = gain / MAX_SCALE_GAIN
+        middle = (clip.tl + clip.br) / 2
+        clip = pymupdf.Rect(middle.x - clip.width * factor / 2,
+                            middle.y - clip.height * factor / 2,
+                            middle.x + clip.width * factor / 2,
+                            middle.y + clip.height * factor / 2)
+        # Shift inward instead of slicing the expanded crop at the page edge.
+        if clip.x0 < source_rect.x0:
+            clip += (source_rect.x0 - clip.x0, 0, source_rect.x0 - clip.x0, 0)
+        if clip.x1 > source_rect.x1:
+            clip += (source_rect.x1 - clip.x1, 0, source_rect.x1 - clip.x1, 0)
+        if clip.y0 < source_rect.y0:
+            clip += (0, source_rect.y0 - clip.y0, 0, source_rect.y0 - clip.y0)
+        if clip.y1 > source_rect.y1:
+            clip += (0, source_rect.y1 - clip.y1, 0, source_rect.y1 - clip.y1)
+        if source_rect.contains(clip):
+            gain = min(BODY.width / clip.width, BODY.height / clip.height) / standard
+        else:
+            return None
+    return (clip, gain) if gain >= MIN_SCALE_GAIN else None
+
+
 def printable(value):
     """Make text safe for built-in PDF fonts without affecting source charts."""
     replacements = {'’': "'", '‘': "'", '“': '"', '”': '"',
@@ -300,7 +389,18 @@ def build():
                     heading(page, header_left)
                     page.insert_text((LEFT, 81), trim(item['title'], RIGHT-LEFT, 9), fontsize=9, color=MUTED)
                     if source is not None:
-                        page.show_pdf_page(BODY, source, source_page, keep_proportion=True)
+                        ink_fraction = source_page_ink_fraction(source[source_page])
+                        choice = choose_source_clip(source[source_page], ink_fraction)
+                        if choice is None:
+                            page.show_pdf_page(BODY, source, source_page, keep_proportion=True)
+                        else:
+                            clip, gain = choice
+                            page.show_pdf_page(BODY, source, source_page,
+                                               keep_proportion=True, clip=clip)
+                            page_audit.append(
+                                f'ENLARGED source page: {item["file"]} | '
+                                f'source page {source_page + 1} | {gain:.2f}x | '
+                                f'clip {tuple(round(float(v), 1) for v in clip)}')
                     else:
                         page.insert_text((LEFT, 180), trim(item['title'], 510, 19, 'hebo'),
                                          fontname='hebo', fontsize=19, color=INK)
@@ -345,6 +445,7 @@ def build():
         f'Excluded compilation/index PDFs: {len([f for f in NON_SONG_PDFS if (SHEETS / f).is_file()])}',
         f'Skipped blank source pages: {sum(s.startswith("SKIPPED") for s in page_audit)}',
         f'Sparse source pages kept for review: {sum(s.startswith("REVIEW sparse") for s in page_audit)}',
+        f'Source pages enlarged: {sum(s.startswith("ENLARGED") for s in page_audit)}',
         '', 'PAGE LAYOUT AUDIT', '-----------------', *(page_audit or ['None']),
         '', 'WARNINGS', '--------', *(warnings or ['None']),
         '', 'UNASSIGNED SOURCE PDFs', '----------------------', *(unlisted or ['None']),

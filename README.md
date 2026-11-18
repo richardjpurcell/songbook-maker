@@ -20,7 +20,7 @@ python scripts/build_songbook.py
 open output/songbook.pdf
 ```
 
-The report is `output/build_report.txt`. It shows curated charts, additional unreviewed PDFs, and any individual song files that could not be included. It also lists completely blank source pages skipped during assembly and short/sparse pages retained for manual review. Original source PDFs are never changed. The index/compilation files `Key for keys.pdf` and `Music - ALL.pdf` are intentionally excluded.
+The report is `output/build_report.txt`. It shows curated charts, additional unreviewed PDFs, and any individual song files that could not be included. It also lists completely blank source pages skipped during assembly and short/sparse pages retained for manual review. The build also reports any conservatively enlarged source pages. Short continuation pages (less than 38% vertical ink coverage) are not enlarged, even if their text density is above the sparse-page threshold. Original source PDFs are never changed. The index/compilation files `Key for keys.pdf` and `Music - ALL.pdf` are intentionally excluded.
 
 ## Add a PDF
 
@@ -42,6 +42,14 @@ The report is `output/build_report.txt`. It shows curated charts, additional unr
 The sync assigns a permanent song ID. New, clearly distinct filenames are typically included automatically; possible duplicates are flagged for review. Filename key hints are **not** musical verification. Unreviewed sheets are still accessible in the finished book.
 
 To correct a song's title, key, capo, or inclusion status, edit its row in `data/metadata/songs.csv` carefully. Keep `song_uid` unchanged; `status=include` selects a curated chart, `status=review` leaves it in the unreviewed section, and `status=exclude` prevents its catalogue row from becoming a curated entry (its PDF may still appear once in Unreviewed PDFs). Rebuild after any edit.
+
+## Test chart scaling
+
+```bash
+python scripts/test_scaling.py
+```
+
+This uses generated sample charts, leaving your song PDFs untouched. The build report lists each page enlarged and the zoom factor. Check those pages visually after a full rebuild.
 
 ## Test the add-new-PDF workflow
 
