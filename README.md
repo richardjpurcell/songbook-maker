@@ -1,6 +1,6 @@
 # Songbook Maker
 
-Builds a clickable PDF songbook from your own song-sheet PDFs. The book is organized by musical key and includes a table of contents, bookmarks, page numbers, and links back to the contents. Sheets without a verified key can appear under **Unknown**. PDFs awaiting review appear in **Unreviewed PDFs**, so every individual song sheet remains accessible without assigning it an unverified key.
+Builds a clickable PDF songbook from your own song-sheet PDFs. The book is organized by musical key and includes a key-based table of contents, a clickable alphabetical appendix, bookmarks, page numbers, and links back to both indexes. Sheets without a verified key can appear under **Unknown**. PDFs awaiting review appear in **Unreviewed PDFs**, so every individual song sheet remains accessible without assigning it an unverified key.
 
 ## Set up
 
@@ -20,7 +20,7 @@ python scripts/build_songbook.py
 open output/songbook.pdf
 ```
 
-The report is `output/build_report.txt`. It shows curated charts, additional unreviewed PDFs, and any individual song files that could not be included. It also lists completely blank source pages skipped during assembly and short/sparse pages retained for manual review. The build also reports any conservatively enlarged source pages. Short continuation pages (less than 38% vertical ink coverage) are not enlarged, even if their text density is above the sparse-page threshold. Original source PDFs are never changed. The index/compilation files `Key for keys.pdf` and `Music - ALL.pdf` are intentionally excluded.
+The alphabetical appendix is generated automatically from the same catalogue. Sorting ignores leading **A**, **An**, and **The** without changing the displayed titles. Each chart has return links to both the key contents and alphabetical appendix. The report is `output/build_report.txt`. It shows curated charts, additional unreviewed PDFs, and any individual song files that could not be included. It also lists completely blank source pages skipped during assembly and short/sparse pages retained for manual review. The build also reports any conservatively enlarged source pages. Short continuation pages (less than 38% vertical ink coverage) are not enlarged, even if their text density is above the sparse-page threshold. Original source PDFs are never changed. The index/compilation files `Key for keys.pdf` and `Music - ALL.pdf` are intentionally excluded.
 
 ## Add a PDF
 
@@ -62,3 +62,11 @@ The test creates a new example PDF in a **temporary copy** of the project, previ
 ## Privacy and GitHub
 
 Only commit code, README, and catalogue metadata. Do **not** commit private source song sheets, the original TOC PDF, or generated songbook PDFs. Verify the ignore rules before pushing.
+
+## Test the alphabetical index
+
+```bash
+python scripts/test_alphabetical_index.py
+```
+
+The test creates its own temporary miniature catalogue and PDF source sheets, builds a book, and checks alphabetical order, link destinations, and the chart return navigation without touching your private song sheets.

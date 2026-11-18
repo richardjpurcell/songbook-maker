@@ -178,15 +178,29 @@ def heading(page, label, title=None):
                          color=MUTED, morph=None, rotate=0)
 
 
-def footer(page, index, toc=False):
+def footer(page, index, toc=False, alphabetical=False):
     page.draw_line((LEFT, 748), (RIGHT, 748), color=(0.75, 0.78, 0.81), width=.7)
     page.insert_text((LEFT, 765), f'Page {index + 1}', fontsize=9, color=MUTED)
-    if not toc:
+    if alphabetical:
+        label = 'Back to Key Contents'
+        x = RIGHT - pymupdf.get_text_length(label, fontsize=9)
+        page.insert_text((x, 765), label, fontsize=9, color=LINK)
+        page.insert_link({'kind': pymupdf.LINK_GOTO,
+                          'from': pymupdf.Rect(x - 3, 749, RIGHT + 2, 775),
+                          'page': 0, 'to': pymupdf.Point(0, 0)})
+    elif not toc:
         label = 'Back to Table of Contents'
         width = pymupdf.get_text_length(label, fontsize=9)
         x = RIGHT - width
         page.insert_text((x, 765), label, fontsize=9, color=LINK)
         page.insert_link({'kind': pymupdf.LINK_GOTO, 'from': pymupdf.Rect(x - 3, 749, RIGHT + 2, 775), 'page': 0, 'to': pymupdf.Point(0, 0)})
+
+        # Target is filled in after all charts have been assembled.
+        alpha_label = 'Alphabetical Index'
+        alpha_x = x - 24 - pymupdf.get_text_length(alpha_label, fontsize=9)
+        page.insert_text((alpha_x, 765), alpha_label, fontsize=9, color=LINK)
+        return pymupdf.Rect(alpha_x - 3, 749, x - 20, 775)
+    return None
 
 
 def load_entries():
@@ -337,12 +351,44 @@ def plan_toc(keys, groups):
     return planned
 
 
+def alphabetical_sort_key(item):
+    # Keep the original title visible, but ignore articles when sorting.
+    title = unicodedata.normalize('NFKD', item['title'])
+    title = ''.join(ch for ch in title if not unicodedata.combining(ch))
+    title = re.sub(r'^(?:a|an|the)\s+', '', title.strip(), flags=re.IGNORECASE)
+    title = re.sub(r'^[^\w]+', '', title)
+    return (title.casefold(), item['title'].casefold(), item['display_id'])
+
+
+def plan_alphabetical_index(items):
+    # Return index-page rows, using original titles and one entry per chart.
+    pages = [[]]
+    y = 111
+    previous_letter = None
+    for item in sorted(items, key=alphabetical_sort_key):
+        normalized = alphabetical_sort_key(item)[0]
+        letter = normalized[0].upper() if normalized and normalized[0].isalpha() else '#'
+        add_letter = letter != previous_letter
+        # Do not orphan an alphabet heading at the bottom of a page.
+        if y + (24 if add_letter else 0) + 18 > 714:
+            pages.append([])
+            y = 111
+        if add_letter:
+            pages[-1].append(('letter', letter, y))
+            y += 24
+        pages[-1].append(('song', item, y))
+        y += 18
+        previous_letter = letter
+    return pages
+
+
 def build():
     keys, groups, warnings, total = load_entries()
     toc_pages = plan_toc(keys, groups)
     doc = pymupdf.open()
     pending_links = []
     page_audit = []
+    chart_alpha_buttons = []
     for toc_idx, rows in enumerate(toc_pages):
         page = doc.new_page(width=PAGE.width, height=PAGE.height)
         heading(page, 'SONGBOOK - CONTENTS')
@@ -357,6 +403,12 @@ def build():
                 page.insert_text((LEFT + 12, y), trim(label, 430, 10.5), fontsize=10.5, color=LINK)
                 pending_links.append((toc_idx, pymupdf.Rect(LEFT + 8, y-13, RIGHT, y+5), item))
         footer(page, toc_idx, toc=True)
+        if toc_idx == 0:
+            # A top-page shortcut; its destination is determined after charts.
+            jump_text = 'Alphabetical Index'
+            jump_x = RIGHT - pymupdf.get_text_length(jump_text, fontsize=9)
+            page.insert_text((jump_x, 94), jump_text, fontsize=9, color=LINK)
+            pending_links.append((toc_idx, pymupdf.Rect(jump_x - 4, 80, RIGHT + 2, 99), None))
 
     outline = [[1, 'Table of Contents', 1]]
     for key in keys:
@@ -405,15 +457,55 @@ def build():
                         page.insert_text((LEFT, 180), trim(item['title'], 510, 19, 'hebo'),
                                          fontname='hebo', fontsize=19, color=INK)
                         page.insert_text((LEFT, 220), 'Chart not yet available', fontsize=12, color=MUTED)
-                    footer(page, len(doc)-1)
+                    alpha_button = footer(page, len(doc)-1)
+                    chart_alpha_buttons.append((len(doc)-1, alpha_button))
             finally:
                 if source is not None:
                     source.close()
                     del source_data
             outline.append([2, printable(f"{item['display_id']}  {item['title']}"), item['page'] + 1])
+    # Append a separate alphabetically sorted appendix, keeping all chart
+    # destinations and the original key-based contents page numbers stable.
+    all_items = [item for key in keys for item in groups[key]]
+    alpha_start = len(doc)
+    alphabetical_pages = plan_alphabetical_index(all_items)
+    alpha_links = 0
+    for rows in alphabetical_pages:
+        index_page_number = len(doc)
+        page = doc.new_page(width=PAGE.width, height=PAGE.height)
+        heading(page, 'SONGBOOK - ALPHABETICAL INDEX')
+        page.insert_text((LEFT, 86), 'Song title', fontsize=9, color=MUTED)
+        column_heading = 'Key / ID'
+        page.insert_text((RIGHT - pymupdf.get_text_length(column_heading, fontsize=9), 86),
+                         column_heading, fontsize=9, color=MUTED)
+        for kind, item_or_letter, y in rows:
+            if kind == 'letter':
+                page.insert_text((LEFT, y), item_or_letter,
+                                 fontname='hebo', fontsize=11, color=INK)
+                continue
+            item = item_or_letter
+            # Right-hand key/ID column is aligned to the page margin.
+            suffix = f"{item['key']}  |  {item['display_id']}"
+            suffix_width = pymupdf.get_text_length(printable(suffix), fontsize=9)
+            page.insert_text((RIGHT - suffix_width, y), printable(suffix),
+                             fontsize=9, color=MUTED)
+            page.insert_text((LEFT + 12, y),
+                             trim(item['title'], RIGHT - LEFT - suffix_width - 31, 9.5),
+                             fontsize=9.5, color=LINK)
+            page.insert_link({'kind': pymupdf.LINK_GOTO,
+                              'from': pymupdf.Rect(LEFT + 8, y - 13, RIGHT + 2, y + 4),
+                              'page': item['page'], 'to': pymupdf.Point(0, 0)})
+            alpha_links += 1
+        footer(page, index_page_number, alphabetical=True)
+    outline.append([1, 'Alphabetical Index', alpha_start + 1])
+    for page_number, rectangle in chart_alpha_buttons:
+        doc[page_number].insert_link({'kind': pymupdf.LINK_GOTO,
+                                       'from': rectangle, 'page': alpha_start,
+                                       'to': pymupdf.Point(0, 0)})
     for toc_index, rectangle, item in pending_links:
         doc[toc_index].insert_link({'kind': pymupdf.LINK_GOTO, 'from': rectangle,
-                                    'page': item['page'], 'to': pymupdf.Point(0, 0)})
+                                    'page': alpha_start if item is None else item['page'],
+                                    'to': pymupdf.Point(0, 0)})
     doc.set_toc(outline)
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     tmp = OUTPUT.with_name('_songbook_building.pdf')
@@ -440,6 +532,8 @@ def build():
         f'Curated charts: {curated_count}',
         f'Unreviewed PDFs included: {supplemental_count}',
         f'TOC pages: {len(toc_pages)}',
+        f'Alphabetical index pages: {len(alphabetical_pages)}',
+        f'Alphabetical index links: {alpha_links}',
         f'PDF pages: {sum(1 for _ in pymupdf.open(OUTPUT))}',
         f'Unrepresented individual PDFs: {len([f for f in unlisted if f not in NON_SONG_PDFS])}',
         f'Excluded compilation/index PDFs: {len([f for f in NON_SONG_PDFS if (SHEETS / f).is_file()])}',
