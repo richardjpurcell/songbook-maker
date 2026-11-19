@@ -13,6 +13,12 @@ open output/songbook.pdf
 
 The builder reads `data/metadata/songs.csv`, loads chart PDFs from `data/song_sheets/`, and writes `output/songbook.pdf` and `output/build_report.txt`. It never modifies source song PDFs or the catalogue. PDF bookmarks, chart-page scaling safeguards, blank-page auditing, and both sets of index links are retained. The builder applies a **180° presentation-only correction** to page 1 of `Red-Winged Blackbird.pdf`; its original PDF is untouched.
 
+### Key-section ordering (Step 77)
+
+The key-based Table of Contents and the corresponding chart sections follow **alphabetical musical-key order**, with major keys preceding their minor forms when their names share a letter (for example, `A`, `Am`, `B`, `Bm`). For the current catalogue the order is `A`, `Am`, `B`, `Bm`, `C`, `D`, `Dm`, `E`, `Em`, `F`, `F#`, `F#m`, `G`, then `Unknown`. If any uncatalogued/review-held PDFs are displayed in `Unreviewed PDFs`, that section follows `Unknown`. Key ordering does **not** depend on the order of rows in `songs.csv`.
+
+Within each key, charts retain their existing **catalogue `position` order** and display labels are regenerated for that section (such as `E001`, `E002`). Permanent `song_uid` values do not change. The alphabetical song-title appendix still sorts by title, ignoring leading articles. Contents links, appendix links, return links, and PDF bookmarks are rebuilt against the updated page locations, so page numbers may move after this change.
+
 ## Add an arrangement (Step 75)
 
 Copy the source PDF into `data/song_sheets/`, preferably using this naming convention:
@@ -80,6 +86,7 @@ These commands create synthetic source PDFs in temporary directories and/or exer
 python scripts/test_scaling.py
 python scripts/test_source_rotation.py
 python scripts/test_alphabetical_index.py
+python scripts/test_key_order.py
 python scripts/test_duplicate_exclusion.py
 python scripts/test_new_pdf.py
 python scripts/test_catalogue_utilities.py

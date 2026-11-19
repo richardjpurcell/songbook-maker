@@ -344,8 +344,11 @@ def load_entries():
         keys.append(SUPPLEMENT_KEY)
 
     # Display IDs are generated from the selected songs, never from legacy IDs.
-    # Preserve existing key order, but always send Unknown to the end.
-    keys = ([key for key in keys if key not in ('Unknown', SUPPLEMENT_KEY)]
+    # Order key sections alphabetically (A, Am, B, Bm, ...), independent of
+    # historical catalogue row order. Unknown and Unreviewed PDFs stay last.
+    # Within a key, existing catalogue positions still determine song order.
+    keys = (sorted((key for key in keys if key not in ('Unknown', SUPPLEMENT_KEY)),
+                   key=str.casefold)
             + (['Unknown'] if 'Unknown' in keys else [])
             + ([SUPPLEMENT_KEY] if SUPPLEMENT_KEY in keys else []))
     groups = {key: [] for key in keys}
