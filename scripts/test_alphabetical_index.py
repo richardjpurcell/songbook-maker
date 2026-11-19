@@ -47,21 +47,23 @@ def audit_sample(number=210):
         assert 'Songbook - alphabetical index'.lower() in doc[alpha].get_text().lower()
         index_pages = range(alpha, len(doc))
         song_pages = [p - 1 for level, label, p in outlines if level == 2]
+        toc_page = next(p - 1 for level, label, p in outlines if label == 'Table of Contents')
+        assert toc_page == 2
         # Every chart gets a back-link to the alphabetical index and the key contents.
         for p in song_pages:
             links = [link['page'] for link in doc[p].get_links() if link['kind'] == pymupdf.LINK_GOTO]
-            assert 0 in links and alpha in links, (p, links)
+            assert toc_page in links and alpha in links, (p, links)
         # All appendix links resolve to a song start and cover every song.
         index_targets = []
         for p in index_pages:
             links = doc[p].get_links()
-            assert any(link.get('page') == 0 for link in links)
+            assert any(link.get('page') == toc_page for link in links)
             index_targets.extend(link['page'] for link in links
-                                 if link['kind'] == pymupdf.LINK_GOTO and link.get('page') != 0)
+                                 if link['kind'] == pymupdf.LINK_GOTO and link.get('page') != toc_page)
         assert len(index_targets) == number
         assert set(index_targets) == set(song_pages)
         # Original by-key index has a shortcut to the appendix.
-        assert alpha in [link['page'] for link in doc[0].get_links()]
+        assert alpha in [link['page'] for link in doc[toc_page].get_links()]
         # Check ordering by actual link text positions, not just code-level sort.
         import importlib.util
         spec = importlib.util.spec_from_file_location('alpha_builder', BUILDER)

@@ -1,83 +1,102 @@
-# Songbook Maker
+# Songbook Maker — Jubilee Road Songbook
 
-Builds a clickable PDF songbook from your own song-sheet PDFs. The book is organized by musical key and includes a key-based table of contents, a clickable alphabetical appendix, bookmarks, page numbers, and links back to both indexes. Sheets without a verified key can appear under **Unknown**. PDFs awaiting review appear in **Unreviewed PDFs**, so every individual song sheet remains accessible without assigning it an unverified key.
+Builds a private, navigable PDF songbook from locally stored song sheets. The generated book contains a title page, a concise usage guide, a key-based table of contents, printable chart pages, and a clickable alphabetical appendix. Each chart page links back to **both** indexes, and separate arrangements of the same song remain separate entries. Index sorting ignores leading **A**, **An**, or **The** while preserving the displayed title.
 
-## Set up
-
-On macOS, in Terminal:
+## Set up and build
 
 ```bash
 cd ~/Projects/songbook_maker
 conda activate songbook-maker
-```
-
-Requires Python 3 and PyMuPDF (`python -m pip install pymupdf` if needed). The working environment already contains these dependencies.
-
-## Known source-page orientation correction
-
-The generated songbook rotates **page 1 of `Red-Winged Blackbird.pdf` by 180°** to make the chart readable. This is an exact-filename, exact-page builder override; it does **not** change the original source PDF, the musical key, any other pages, or the songbook header/footer. The build report lists the rotation under `PAGE LAYOUT AUDIT` and counts it as `Source pages rotated: 1` when that chart is included.
-
-To test the correction without using private PDFs:
-
-```bash
-python scripts/test_source_rotation.py
-python scripts/test_alphabetical_index.py
-```
-
-## Build the songbook
-
-```bash
 python scripts/build_songbook.py
 open output/songbook.pdf
 ```
 
-The alphabetical appendix is generated automatically from the same catalogue. Sorting ignores leading **A**, **An**, and **The** without changing the displayed titles. Each chart has return links to both the key contents and alphabetical appendix. The report is `output/build_report.txt`. It shows curated charts, additional unreviewed PDFs, and any individual song files that could not be included. It also lists completely blank source pages skipped during assembly and short/sparse pages retained for manual review. The build also reports any conservatively enlarged source pages. Short continuation pages (less than 38% vertical ink coverage) are not enlarged, even if their text density is above the sparse-page threshold. Original source PDFs are never changed. The index/compilation files `Key for keys.pdf` and `Music - ALL.pdf` are intentionally excluded.
+The builder reads `data/metadata/songs.csv`, loads chart PDFs from `data/song_sheets/`, and writes `output/songbook.pdf` and `output/build_report.txt`. It never modifies source song PDFs or the catalogue. PDF bookmarks, chart-page scaling safeguards, blank-page auditing, and both sets of index links are retained. The builder applies a **180° presentation-only correction** to page 1 of `Red-Winged Blackbird.pdf`; its original PDF is untouched.
 
-## Add a PDF
+## Add an arrangement (Step 75)
 
-1. Copy the new song sheet into `data/song_sheets/`. Use a descriptive filename, such as `My New Song.pdf` or `My New Song in D.pdf`.
-2. Preview the catalogue import:
+Copy the source PDF into `data/song_sheets/`, preferably using this naming convention:
 
-   ```bash
-   python scripts/sync_catalogue.py
-   ```
+`Song_Title_Optional_Version_Key.pdf`
 
-3. If the preview looks right, apply it and rebuild:
+For example: `Midnight_Special_Regular_Chorus_G.pdf`. This is a helpful naming convention, **not** an inference rule: the catalogue controls title, key, permanent UID, and inclusion status. Spaces and apostrophes are allowed in source filenames.
 
-   ```bash
-   python scripts/sync_catalogue.py --apply
-   python scripts/build_songbook.py
-   open output/songbook.pdf
-   ```
+Preview first (use quotes around filenames and titles that contain spaces or apostrophes):
 
-The sync assigns a permanent song ID. New, clearly distinct filenames are typically included automatically; possible duplicates are flagged for review. Filename key hints are **not** musical verification. Unreviewed sheets are still accessible in the finished book.
+```bash
+python scripts/add_song.py --pdf "New_Song_G.pdf" --title "New Song" --key G --check
+```
 
-To correct a song's title, key, capo, or inclusion status, edit its row in `data/metadata/songs.csv` carefully. Keep `song_uid` unchanged; `status=include` selects a curated chart, `status=review` leaves it in the unreviewed section, and `status=exclude` prevents its catalogue row from becoming a curated entry (its PDF may still appear once in Unreviewed PDFs). Rebuild after any edit.
+If the preview is correct, explicitly apply the change and rebuild:
 
-## Test chart scaling
+```bash
+python scripts/add_song.py --pdf "New_Song_G.pdf" --title "New Song" --key G --apply
+python scripts/build_songbook.py
+open output/songbook.pdf
+```
+
+Optional: `--artist "Artist Name"`. Supported key notation includes `G`, `Am`, `Bb`, `F#m`, and the deliberate value `Unknown` when musical evidence is insufficient. The utility checks that the source exists, is a readable nonempty PDF, and is not already registered under any status. It validates existing permanent UIDs and creates the next `S#####` UID. It appends a new `status=include` row without modifying existing records, retaining all existing catalogue columns and choosing the next available position in that key section. Identical titles are allowed for distinct arrangements; the preview warns about them. The legacy `id` field is deliberately left blank because **builder-generated display IDs are not permanent identifiers**.
+
+## Exclude an arrangement without deleting it (Step 75)
+
+Use its **permanent `song_uid`**, not its displayed key/number label:
+
+```bash
+python scripts/remove_song.py --uid S00315 --check
+python scripts/remove_song.py --uid S00315 --apply
+python scripts/build_songbook.py
+```
+
+The preview displays the title, key, current status and original source filename. `--apply` changes **only** that catalogue row's status from `include` to `exclude`; it does **not** delete the row or PDF. Nonexistent IDs, duplicates, already excluded records, and records not currently included are refused. Re-adding a previously excluded song is a separate, deliberate future operation; do not add a second record for its original PDF.
+
+Every successful add/remove operation creates a timestamped original CSV backup under `output/backups/` and a JSON audit under `output/`, including checksums. These files remain local and are ignored by Git. Both operations require an explicit `--check` or `--apply`; no flag means no change.
+
+The builder never puts a PDF associated with **any** `status=exclude` record into the **Unreviewed PDFs** section. That includes the known duplicate `S00289` (`Stand My Ground.pdf`), whose permanent exclusion and exact source filename continue to be guarded. A source with an active `include` record remains included even if a separate historical row also references and excludes that filename. Uncatalogued and review-held sources may still appear in Unreviewed PDFs; they are clearly identified, without inferring a musical key.
+
+The existing `scripts/sync_catalogue.py` remains available for broad folder inventory/synchronization. For intentional individual additions, prefer `add_song.py`: it verifies the supplied key and makes the operation explicit.
+
+## Publication title, version and date (Step 75)
+
+Edit `config/songbook.json` to customize the cover title or start a new major version:
+
+```json
+{
+  "title": "Jubilee Road Songbook",
+  "major_version": 1
+}
+```
+
+On a first Step 75 build, the cover shows **Version 1.0** and the local machine's **Last updated** date. The builder records publication metadata in `output/publication_state.json`, which is deliberately **local and not tracked**. Each subsequent successful build compares a SHA-256 fingerprint of the catalogue, the actual included chart PDFs (including any unreviewed charts), the builder script and the optional configuration. If they have not changed, the version and date stay the same. If they change, the minor edition advances (`1.0`, `1.1`, `1.2`, ...), and the date becomes the local date of that successful build. Manually increasing `major_version` starts at `.0` again.
+
+**Keep `output/publication_state.json` in your local backups** along with the catalogue and songbook. If that local file is lost or `output/` is cleared, the next build starts a fresh `1.0` publication sequence; it cannot infer a previous sequential edition from Git or the PDF. Backups/audits and generated PDFs are also local-only.
+
+The two new front-matter pages are included in the PDF page count. The guide page includes a **clickable GitHub repository link** to https://github.com/richardjpurcell/songbook-maker for the source code and documentation. This link does not publish or embed any private chart PDFs. All contents and alphabetical destinations, chart return links and bookmarks are calculated from actual assembled page positions rather than assuming the contents begin at PDF page 1.
+
+## Test without private song PDFs
+
+These commands create synthetic source PDFs in temporary directories and/or exercise pure scaling logic. They never open or modify the private source song sheets:
 
 ```bash
 python scripts/test_scaling.py
-```
-
-This uses generated sample charts, leaving your song PDFs untouched. The build report lists each page enlarged and the zoom factor. Check those pages visually after a full rebuild.
-
-## Test the add-new-PDF workflow
-
-```bash
+python scripts/test_source_rotation.py
+python scripts/test_alphabetical_index.py
+python scripts/test_duplicate_exclusion.py
 python scripts/test_new_pdf.py
+python scripts/test_catalogue_utilities.py
+python scripts/test_front_matter.py
+python scripts/test_catalogue_compatibility.py
 ```
 
-The test creates a new example PDF in a **temporary copy** of the project, previews and applies the catalogue sync, builds a test songbook, and confirms the new and existing sheets are present. It never adds the example song to your real catalogue.
+The last test reads the current catalogue **metadata** but generates replacement synthetic chart PDFs in a temporary directory; it never copies your original source PDFs. `output/build_report.txt` shows curated and unreviewed chart counts, front matter, contents and alphabetical page counts, link counts, skipped blank pages, conservative enlargements, and source-page rotations.
 
 ## Privacy and GitHub
 
-Only commit code, README, and catalogue metadata. Do **not** commit private source song sheets, the original TOC PDF, or generated songbook PDFs. Verify the ignore rules before pushing.
-
-## Test the alphabetical index
+The repository ignores `data/song_sheets/*`, `data/table_of_contents/*` and `output/*` (except each `.gitkeep`). **Never commit source PDFs, generated songbooks, private backups, or private audit data.** Only stage code, configuration, documentation and deliberately reviewed catalogue metadata. Verify before any commit:
 
 ```bash
-python scripts/test_alphabetical_index.py
+git status --short
+git ls-files '*.pdf'    # Must print nothing
+git diff --cached --name-only
 ```
 
-The test creates its own temporary miniature catalogue and PDF source sheets, builds a book, and checks alphabetical order, link destinations, and the chart return navigation without touching your private song sheets.
+If `git ls-files '*.pdf'` prints any filenames, stop and investigate before committing or pushing.

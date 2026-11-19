@@ -72,8 +72,9 @@ def exercise():
         assert first_line_direction(doc[ctl], 'CONTROL BODY TEXT')[0] > 0.99
         assert 'KEY: D' in doc[red].get_text()
         appendix = next(page-1 for level,name,page in doc.get_toc() if name == 'Alphabetical Index')
+        contents = next(page-1 for level,name,page in doc.get_toc() if name == 'Table of Contents')
         links = [x['page'] for x in doc[red].get_links() if x['kind'] == pymupdf.LINK_GOTO]
-        assert 0 in links and appendix in links, links
+        assert contents in links and appendix in links, links
         report = (root / 'output/build_report.txt').read_text()
         assert 'Source pages rotated: 1' in report, report
         assert 'ROTATED source page: Red-Winged Blackbird.pdf | source page 1 | 180 degrees' in report

@@ -63,7 +63,9 @@ def read_catalogue():
         if not REQUIRED <= set(fields):
             raise SystemExit("songs.csv has unexpected columns; no changes made.")
         rows = list(reader)
-    ids = [r["id"].strip() for r in rows]
+    # New manually added records may have no legacy display ID; the builder
+    # computes display IDs at build time. Only nonempty legacy IDs need uniqueness.
+    ids = [r["id"].strip() for r in rows if r["id"].strip()]
     if len(ids) != len(set(ids)):
         raise SystemExit("Duplicate catalogue IDs; no changes made.")
     uids = [r["song_uid"].strip() for r in rows]
@@ -89,7 +91,7 @@ def main():
     files = sorted((p.name for p in PDF_DIR.iterdir() if p.is_file() and p.suffix.lower() == ".pdf"), key=str.casefold)
     assigned = {r["source_pdf"].strip() for r in songs if r["source_pdf"].strip()}
     positions = Counter()
-    used_ids = {r["id"].strip() for r in songs}
+    used_ids = {r["id"].strip() for r in songs if r["id"].strip()}
     next_uid = max((int(r["song_uid"][1:]) for r in songs), default=0) + 1
     for row in songs:
         try:

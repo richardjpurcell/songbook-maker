@@ -76,8 +76,9 @@ def main():
             assert all('Stand My Ground' not in name for name, _ in charts)
             assert sum("I Won't Back Down" in name for name, _ in charts) == 1
             alpha = next(p-1 for level, name, p in toc if name == 'Alphabetical Index')
+            destinations = {page for _, page in charts}
             assert sum(1 for page in list(book)[alpha:] for l in page.get_links()
-                       if l['kind'] == pymupdf.LINK_GOTO and l.get('page') != 0) == 209
+                       if l['kind'] == pymupdf.LINK_GOTO and l.get('page') in destinations) == 209
         report = (root / 'output/build_report.txt').read_text()
         for line in ['Included charts: 209', 'Unreviewed PDFs included: 0',
                      'Alphabetical index links: 209', 'Unrepresented individual PDFs: 0',

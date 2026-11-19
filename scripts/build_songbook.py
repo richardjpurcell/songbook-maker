@@ -4,7 +4,12 @@ Usage (from repository root): python scripts/build_songbook.py
 This never modifies PDFs or the catalogue.
 """
 import csv
+import datetime as dt
+import hashlib
+import json
+import os
 import re
+import tempfile
 import unicodedata
 from collections import Counter
 from pathlib import Path
@@ -16,6 +21,11 @@ CATALOGUE = ROOT / 'data' / 'metadata' / 'songs.csv'
 SHEETS = ROOT / 'data' / 'song_sheets'
 OUTPUT = ROOT / 'output' / 'songbook.pdf'
 REPORT = ROOT / 'output' / 'build_report.txt'
+CONFIG = ROOT / 'config' / 'songbook.json'
+PUBLICATION_STATE = ROOT / 'output' / 'publication_state.json'
+FRONT_MATTER_PAGES = 2
+DEFAULT_TITLE = 'Jubilee Road Songbook'
+REPOSITORY_URL = 'https://github.com/richardjpurcell/songbook-maker'
 
 PAGE = pymupdf.Rect(0, 0, 612, 792)  # US Letter
 LEFT, RIGHT = 44, 568
@@ -27,8 +37,8 @@ LINK = (0.10, 0.31, 0.56)
 
 # Index/compilation PDFs are not individual song sheets.
 NON_SONG_PDFS = {'Key for keys.pdf', 'Music - ALL.pdf'}
-# Explicitly retired duplicate: original source remains on disk. Its catalogue
-# row must be status=exclude and retain the exact permanent UID and filename.
+# Permanent guard for the known duplicate, in addition to the general rule
+# excluding ALL catalogue rows with status=exclude from unreviewed sources.
 EXCLUDED_DUPLICATES = {'S00289': 'Stand My Ground.pdf'}
 SUPPLEMENT_KEY = 'Unreviewed PDFs'
 
@@ -190,7 +200,7 @@ def heading(page, label, title=None):
                          color=MUTED, morph=None, rotate=0)
 
 
-def footer(page, index, toc=False, alphabetical=False):
+def footer(page, index, toc=False, alphabetical=False, toc_start=FRONT_MATTER_PAGES):
     page.draw_line((LEFT, 748), (RIGHT, 748), color=(0.75, 0.78, 0.81), width=.7)
     page.insert_text((LEFT, 765), f'Page {index + 1}', fontsize=9, color=MUTED)
     if alphabetical:
@@ -199,13 +209,13 @@ def footer(page, index, toc=False, alphabetical=False):
         page.insert_text((x, 765), label, fontsize=9, color=LINK)
         page.insert_link({'kind': pymupdf.LINK_GOTO,
                           'from': pymupdf.Rect(x - 3, 749, RIGHT + 2, 775),
-                          'page': 0, 'to': pymupdf.Point(0, 0)})
+                          'page': toc_start, 'to': pymupdf.Point(0, 0)})
     elif not toc:
         label = 'Back to Table of Contents'
         width = pymupdf.get_text_length(label, fontsize=9)
         x = RIGHT - width
         page.insert_text((x, 765), label, fontsize=9, color=LINK)
-        page.insert_link({'kind': pymupdf.LINK_GOTO, 'from': pymupdf.Rect(x - 3, 749, RIGHT + 2, 775), 'page': 0, 'to': pymupdf.Point(0, 0)})
+        page.insert_link({'kind': pymupdf.LINK_GOTO, 'from': pymupdf.Rect(x - 3, 749, RIGHT + 2, 775), 'page': toc_start, 'to': pymupdf.Point(0, 0)})
 
         # Target is filled in after all charts have been assembled.
         alpha_label = 'Alphabetical Index'
@@ -228,7 +238,6 @@ def load_entries():
         raise ValueError('song_uid must be present and unique for every catalogue record')
 
     # Fail closed if the retired duplicate is renamed, re-included, or absent.
-    excluded_duplicate_files = set()
     for uid, expected_pdf in EXCLUDED_DUPLICATES.items():
         matches = [r for r in rows if r['song_uid'].strip() == uid]
         if not matches:
@@ -238,7 +247,12 @@ def load_entries():
             raise ValueError(f'Excluded duplicate {uid} must be status=exclude with source {expected_pdf!r}')
         if not (SHEETS / expected_pdf).is_file():
             raise ValueError(f'Excluded duplicate source missing: {expected_pdf}')
-        excluded_duplicate_files.add(expected_pdf)
+
+    # Every intentional catalogue exclusion suppresses fallback into Unreviewed.
+    # If a PDF also has an included row, its included chart still takes priority.
+    excluded_files = {r['source_pdf'].strip() for r in rows
+                      if (r.get('status') or '').strip().lower() == 'exclude'
+                      and (r.get('source_pdf') or '').strip()}
 
     keys = []
     selected = []
@@ -298,15 +312,15 @@ def load_entries():
                     warnings.append(f'{ident}: unreadable PDF {filename!r} ({exc}); blank page created')
         selected.append(item)
 
-    # Show every individual source PDF exactly once, even when its catalogue
-    # record is held for review or excluded as a redundant imported entry.
-    # These copies are visibly identified as UNREVIEWED: no musical key is inferred.
+    # Keep unassigned and review-held sources visible, except when a catalogue
+    # record explicitly marks that source PDF excluded. Never resurrect an
+    # intentional exclusion as an unreviewed chart.
     included_files = {item['file'] for item in selected if item['status'] == 'include'}
     supplemental = []
     for path in sorted(SHEETS.iterdir(), key=lambda p: p.name.casefold()):
         if not path.is_file() or path.suffix.lower() != '.pdf':
             continue
-        if path.name in NON_SONG_PDFS or path.name in excluded_duplicate_files or path.name in included_files:
+        if path.name in NON_SONG_PDFS or path.name in excluded_files or path.name in included_files:
             continue
         try:
             with pymupdf.open(path) as source:
@@ -352,7 +366,7 @@ def load_entries():
     for filename, count in used.items():
         if count > 1:
             warnings.append(f'PDF used {count} times: {filename}')
-    return keys, groups, warnings, len(rows)
+    return keys, groups, warnings, len(rows), excluded_files
 
 
 def plan_toc(keys, groups):
@@ -407,14 +421,180 @@ def plan_alphabetical_index(items):
     return pages
 
 
+
+def load_publication_config():
+    """Optional small, tracked configuration file; never requires private PDFs."""
+    settings = {'title': DEFAULT_TITLE, 'major_version': 1}
+    if CONFIG.exists():
+        raw = json.loads(CONFIG.read_text(encoding='utf-8'))
+        if not isinstance(raw, dict) or set(raw) - set(settings):
+            raise ValueError('config/songbook.json may only specify title and major_version')
+        settings.update(raw)
+    if not isinstance(settings['title'], str) or not settings['title'].strip():
+        raise ValueError('Publication title must be nonempty')
+    if (type(settings['major_version']) is not int or settings['major_version'] < 1):
+        raise ValueError('major_version must be a positive integer')
+    settings['title'] = settings['title'].strip()
+    return settings
+
+
+def prepare_publication_state(settings, groups):
+    """Edition changes only if the assembled inputs change.
+
+    Inputs include catalogue bytes, current builder, optional title configuration,
+    and the exact source PDFs used for charts (including unreviewed charts).
+    A local JSON state file retains the revision number and original update date.
+    It is committed only after a successful build and report generation.
+    """
+    digest = hashlib.sha256()
+    for label, data in (('builder', Path(__file__).read_bytes()),
+                        ('catalogue', CATALOGUE.read_bytes()),
+                        ('config', CONFIG.read_bytes() if CONFIG.exists() else b'')):
+        digest.update(label.encode() + b'\0' + len(data).to_bytes(8, 'big') + data)
+    files = sorted({s['file'] for items in groups.values() for s in items
+                    if s['status'] == 'include' and s['file']})
+    for filename in files:
+        path = SHEETS / filename
+        if path.is_file():
+            digest.update(filename.encode('utf-8') + b'\0')
+            with path.open('rb') as handle:
+                for chunk in iter(lambda: handle.read(1024 * 1024), b''):
+                    digest.update(chunk)
+    fingerprint = digest.hexdigest()
+    previous = None
+    if PUBLICATION_STATE.exists():
+        previous = json.loads(PUBLICATION_STATE.read_text(encoding='utf-8'))
+        if (not isinstance(previous, dict) or previous.get('schema') != 1 or
+                type(previous.get('major_version')) is not int or
+                type(previous.get('revision')) is not int or previous['revision'] < 0 or
+                not re.fullmatch(r'[a-f0-9]{64}', str(previous.get('fingerprint', ''))) or
+                not re.fullmatch(r'\d{4}-\d{2}-\d{2}', str(previous.get('last_updated', '')))):
+            raise ValueError('Invalid output/publication_state.json; preserve or restore from backup')
+    if previous and previous['major_version'] == settings['major_version'] and previous['fingerprint'] == fingerprint:
+        return previous
+    if previous and previous['major_version'] == settings['major_version']:
+        revision = previous['revision'] + 1
+    else:
+        revision = 0
+    return {'schema': 1, 'major_version': settings['major_version'],
+            'revision': revision, 'fingerprint': fingerprint,
+            'last_updated': dt.date.today().isoformat()}
+
+
+def persist_publication_state(state):
+    PUBLICATION_STATE.parent.mkdir(parents=True, exist_ok=True)
+    name = None
+    try:
+        with tempfile.NamedTemporaryFile('w', dir=PUBLICATION_STATE.parent,
+                                         prefix='.publication_state_', suffix='.json',
+                                         encoding='utf-8', delete=False) as handle:
+            name = Path(handle.name)
+            json.dump(state, handle, indent=2)
+            handle.write('\n')
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(name, PUBLICATION_STATE)
+    finally:
+        if name is not None and name.exists():
+            name.unlink()
+
+
+def publication_version(state):
+    return f"{state['major_version']}.{state['revision']}"
+
+
+def title_page(doc, settings, state, toc_start):
+    page = doc.new_page(width=PAGE.width, height=PAGE.height)
+    # Minimal typographic cover, with printable margins and no identifying data.
+    page.draw_line((LEFT, 104), (RIGHT, 104), color=(0.70, 0.75, 0.78), width=1)
+    page.insert_text((LEFT, 83), 'JUBILEE ROAD  /  MUSIC COLLECTION', fontsize=9,
+                     fontname='hebo', color=MUTED)
+    page.insert_text((LEFT, 312), trim(settings['title'], RIGHT - LEFT, 32, 'hebo'),
+                     fontsize=32, fontname='hebo', color=INK)
+    page.draw_line((LEFT, 345), (LEFT + 126, 345), color=LINK, width=2.2)
+    page.insert_text((LEFT, 386), 'Arrangements for playing, singing and practice',
+                     fontsize=12, color=MUTED)
+    page.insert_text((LEFT, 565), f'Version {publication_version(state)}',
+                     fontsize=12, fontname='hebo', color=INK)
+    updated = dt.date.fromisoformat(state['last_updated']).strftime('%B %d, %Y')
+    page.insert_text((LEFT, 592), f'Last updated: {updated}', fontsize=11, color=MUTED)
+    label = 'Open Key Contents'
+    page.insert_text((LEFT, 705), label, fontsize=10, color=LINK)
+    return pymupdf.Rect(LEFT - 3, 690, LEFT + 170, 714)
+
+
+def guide_page(doc, settings, toc_start):
+    page = doc.new_page(width=PAGE.width, height=PAGE.height)
+    heading(page, 'ABOUT THIS SONGBOOK')
+    page.insert_text((LEFT, 124), 'How to use this songbook', fontname='hebo', fontsize=21, color=INK)
+    page.insert_text((LEFT, 158), 'A collection of individual song charts and arrangements,', fontsize=11, color=INK)
+    page.insert_text((LEFT, 175), 'organized for easy reference while playing or practicing.', fontsize=11, color=INK)
+
+    def subsection(y, label, sentences):
+        page.insert_text((LEFT, y), label, fontname='hebo', fontsize=11, color=INK)
+        for offset, sentence in enumerate(sentences, 1):
+            page.insert_text((LEFT + 12, y + offset * 18), printable(sentence), fontsize=10.5, color=INK)
+
+    subsection(216, 'FIND AN ARRANGEMENT', [
+        'Key Contents groups charts by musical key.',
+        'Alphabetical Index lists charts by song title, ignoring leading articles.',
+        'Both indexes are clickable and jump directly to the selected chart.',
+    ])
+    subsection(318, 'NAVIGATE AND COMPARE', [
+        'Each chart page links back to Key Contents and Alphabetical Index.',
+        'Different arrangements of the same song may appear separately.',
+    ])
+    subsection(402, 'SOURCE PDF FILES', [
+        'Preferred filename format (underscores separate words):',
+    ])
+    page.draw_rect(pymupdf.Rect(LEFT + 11, 438, RIGHT, 476),
+                   color=(0.82, 0.85, 0.88), fill=(0.96, 0.97, 0.98), width=.6)
+    page.insert_text((LEFT + 24, 462), 'Song_Title_Optional_Version_Key.pdf',
+                     fontname='cour', fontsize=10.5, color=INK)
+    page.insert_text((LEFT + 12, 502), 'Example: Midnight_Special_Regular_Chorus_G.pdf',
+                     fontsize=10.5, color=INK)
+    page.insert_text((LEFT + 12, 526), 'Filenames are a convention, not the authority:', fontsize=10.5, color=INK)
+    page.insert_text((LEFT + 12, 544), 'the catalogue determines title, key, and inclusion status.',
+                     fontsize=10.5, color=INK)
+
+    subsection(585, 'PROJECT REPOSITORY', [
+        'Source code and documentation are available on GitHub:',
+    ])
+    url_label = 'github.com/richardjpurcell/songbook-maker'
+    url_x, url_y, url_font = LEFT + 12, 633, 10.5
+    page.insert_text((url_x, url_y), url_label, fontsize=url_font, color=LINK)
+    url_width = pymupdf.get_text_length(url_label, fontsize=url_font)
+    page.draw_line((url_x, url_y + 2.5), (url_x + url_width, url_y + 2.5),
+                   color=LINK, width=.5)
+    page.insert_link({'kind': pymupdf.LINK_URI,
+                      'from': pymupdf.Rect(url_x - 3, url_y - 13, url_x + url_width + 3, url_y + 5),
+                      'uri': REPOSITORY_URL})
+    page.insert_text((LEFT + 12, 655), 'Source PDFs and generated songbooks remain private and local.',
+                     fontsize=10, color=MUTED)
+
+    key_label = 'Go to Key Contents'
+    page.insert_text((LEFT, 690), key_label, fontsize=10, color=LINK)
+    toc_rectangle = pymupdf.Rect(LEFT - 3, 675, LEFT + 180, 698)
+    alpha_label = 'Go to Alphabetical Index'
+    alpha_x = RIGHT - pymupdf.get_text_length(alpha_label, fontsize=10)
+    page.insert_text((alpha_x, 690), alpha_label, fontsize=10, color=LINK)
+    footer(page, len(doc) - 1, toc=True)
+    return toc_rectangle, pymupdf.Rect(alpha_x - 3, 675, RIGHT + 2, 698)
+
 def build():
-    keys, groups, warnings, total = load_entries()
+    keys, groups, warnings, total, excluded_files = load_entries()
+    settings = load_publication_config()
+    state = prepare_publication_state(settings, groups)
     toc_pages = plan_toc(keys, groups)
+    toc_start = FRONT_MATTER_PAGES
     doc = pymupdf.open()
+    title_toc_button = title_page(doc, settings, state, toc_start)
+    guide_toc_button, guide_alpha_button = guide_page(doc, settings, toc_start)
     pending_links = []
     page_audit = []
     chart_alpha_buttons = []
     for toc_idx, rows in enumerate(toc_pages):
+        page_number = len(doc)
         page = doc.new_page(width=PAGE.width, height=PAGE.height)
         heading(page, 'SONGBOOK - CONTENTS')
         if toc_idx == 0:
@@ -426,16 +606,17 @@ def build():
                 item = object_
                 label = f"{item['display_id']}   {item['title']}"
                 page.insert_text((LEFT + 12, y), trim(label, 430, 10.5), fontsize=10.5, color=LINK)
-                pending_links.append((toc_idx, pymupdf.Rect(LEFT + 8, y-13, RIGHT, y+5), item))
-        footer(page, toc_idx, toc=True)
+                pending_links.append((page_number, pymupdf.Rect(LEFT + 8, y-13, RIGHT, y+5), item))
+        footer(page, page_number, toc=True)
         if toc_idx == 0:
             # A top-page shortcut; its destination is determined after charts.
             jump_text = 'Alphabetical Index'
             jump_x = RIGHT - pymupdf.get_text_length(jump_text, fontsize=9)
             page.insert_text((jump_x, 94), jump_text, fontsize=9, color=LINK)
-            pending_links.append((toc_idx, pymupdf.Rect(jump_x - 4, 80, RIGHT + 2, 99), None))
+            pending_links.append((page_number, pymupdf.Rect(jump_x - 4, 80, RIGHT + 2, 99), None))
 
-    outline = [[1, 'Table of Contents', 1]]
+    outline = [[1, 'Title Page', 1], [1, 'About This Songbook', 2],
+               [1, 'Table of Contents', toc_start + 1]]
     for key in keys:
         group = groups[key]
         outline.append([1, 'Unreviewed PDFs' if key == SUPPLEMENT_KEY else ('Unknown Key' if key == 'Unknown' else f'Key of {key}'), len(doc) + 1])
@@ -530,8 +711,13 @@ def build():
                               'from': pymupdf.Rect(LEFT + 8, y - 13, RIGHT + 2, y + 4),
                               'page': item['page'], 'to': pymupdf.Point(0, 0)})
             alpha_links += 1
-        footer(page, index_page_number, alphabetical=True)
+        footer(page, index_page_number, alphabetical=True, toc_start=toc_start)
     outline.append([1, 'Alphabetical Index', alpha_start + 1])
+    for page_number, rectangle in ((0, title_toc_button), (1, guide_toc_button)):
+        doc[page_number].insert_link({'kind': pymupdf.LINK_GOTO, 'from': rectangle,
+                                      'page': toc_start, 'to': pymupdf.Point(0, 0)})
+    doc[1].insert_link({'kind': pymupdf.LINK_GOTO, 'from': guide_alpha_button,
+                        'page': alpha_start, 'to': pymupdf.Point(0, 0)})
     for page_number, rectangle in chart_alpha_buttons:
         doc[page_number].insert_link({'kind': pymupdf.LINK_GOTO,
                                        'from': rectangle, 'page': alpha_start,
@@ -558,7 +744,7 @@ def build():
     unlisted = sorted(p.name for p in SHEETS.glob('*.pdf') if p.name not in {
         s['file'] for g in groups.values() for s in g if s['status'] == 'include'})
     unrepresented = [f for f in unlisted if f not in NON_SONG_PDFS and
-                     f not in EXCLUDED_DUPLICATES.values()]
+                     f not in excluded_files]
     lines = [
         'SONGBOOK BUILD REPORT', '=====================',
         f'Catalogue entries: {total}',
@@ -567,12 +753,19 @@ def build():
         f'Review/excluded catalogue entries: {total-curated_count-blanks}',
         f'Curated charts: {curated_count}',
         f'Unreviewed PDFs included: {supplemental_count}',
+        f'Publication title: {settings["title"]}',
+        f'Publication version: {publication_version(state)}',
+        f'Last updated: {state["last_updated"]}',
+        f'Front matter pages: {FRONT_MATTER_PAGES}',
+        f'Title pages: 1',
+        f'Guide pages: 1',
         f'TOC pages: {len(toc_pages)}',
         f'Alphabetical index pages: {len(alphabetical_pages)}',
         f'Alphabetical index links: {alpha_links}',
         f'PDF pages: {sum(1 for _ in pymupdf.open(OUTPUT))}',
         f'Unrepresented individual PDFs: {len(unrepresented)}',
         f'Excluded duplicate PDFs: {len([f for f in unlisted if f in EXCLUDED_DUPLICATES.values()])}',
+        f'Intentionally excluded source PDFs: {len([f for f in unlisted if f in excluded_files])}',
         f'Excluded compilation/index PDFs: {len([f for f in NON_SONG_PDFS if (SHEETS / f).is_file()])}',
         f'Skipped blank source pages: {sum(s.startswith("SKIPPED") for s in page_audit)}',
         f'Sparse source pages kept for review: {sum(s.startswith("REVIEW sparse") for s in page_audit)}',
@@ -580,13 +773,14 @@ def build():
         f'Source pages rotated: {sum(s.startswith("ROTATED") for s in page_audit)}',
         '', 'PAGE LAYOUT AUDIT', '-----------------', *(page_audit or ['None']),
         '', 'WARNINGS', '--------', *(warnings or ['None']),
-        '', 'INTENTIONALLY EXCLUDED DUPLICATE PDFs', '-------------------------------------',
-        *(sorted(f for f in unlisted if f in EXCLUDED_DUPLICATES.values()) or ['None']),
+        '', 'INTENTIONALLY EXCLUDED SOURCE PDFs', '----------------------------------',
+        *(sorted(f for f in unlisted if f in excluded_files) or ['None']),
         '', 'UNASSIGNED SOURCE PDFs', '----------------------',
-        *(sorted(f for f in unlisted if f not in EXCLUDED_DUPLICATES.values()) or ['None']),
+        *(unrepresented or ['None']),
     ]
     REPORT.write_text('\n'.join(lines) + '\n', encoding='utf-8')
-    print('\n'.join(lines[:13]))
+    persist_publication_state(state)
+    print('\n'.join(lines[:19]))
     print(f'Songbook: {OUTPUT}')
     print(f'Report: {REPORT}')
 
